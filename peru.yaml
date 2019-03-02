@@ -1,0 +1,7 @@
+imports:
+  plexus:
+    - out/lib
+
+git module plexus:
+  url: https://github.com/olson-sean-k/plexus.git
+  rev: master

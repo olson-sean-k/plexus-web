@@ -1,0 +1,43 @@
+docs_dir: src/
+site_dir: out/doc/
+
+site_name: Plexus
+site_author: Sean Olson
+site_url: https://plexus.rs
+
+repo_url: https://github.com/olson-sean-k/plexus
+repo_name: olson-sean-k/plexus
+edit_uri: ""
+
+nav:
+  - Home:
+    - About: index.md
+    - license.md
+  - User Guide:
+    - Getting Started: user-guide/getting-started.md
+    - Generators: user-guide/generators.md
+    - Buffers: user-guide/buffers.md
+    - Graphs: user-guide/graphs.md
+    - Geometry: user-guide/geometry.md
+  - API Documentation:
+    - plexus: rustdoc/plexus/index.html
+
+theme:
+  name: material
+  custom_dir: src/theme/
+  language: en
+  logo: img/plexus.svg
+  palette:
+    primary: purple
+    accent: amber
+  feature:
+    tabs: true
+
+extra:
+  social:
+    - type: github
+      link: https://github.com/olson-sean-k
+    - type: twitter
+      link: https://twitter.com/olsonseank
+  search:
+    language: en
