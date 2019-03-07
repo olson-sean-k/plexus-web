@@ -1,8 +1,10 @@
+# About
+
 **Plexus** is a [Rust library](https://crates.io/crates/plexus) for processing
 2D and 3D meshes. It provides primitive structures, generators, buffers, and
 graphs that are generic over their geometry and payloads.
 
-# Examples
+## Examples
 
 ```rust
 use nalgebra::Point3;
