@@ -12,7 +12,8 @@ edit_uri: ""
 nav:
   - Home:
     - About: index.md
-    - license.md
+    - Contributing: contribute.md
+    - License: license.md
   - User Guide:
     - Getting Started: user-guide/getting-started.md
     - Generators: user-guide/generators.md
@@ -32,6 +33,13 @@ theme:
     accent: amber
   feature:
     tabs: true
+
+markdown_extensions:
+  - admonition
+  - codehilite:
+      linenums: true
+  - toc:
+      permalink: true
 
 extra:
   social:
