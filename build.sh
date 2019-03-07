@@ -17,7 +17,8 @@ which cargo > /dev/null
 which git > /dev/null
 which peru > /dev/null
 
-peru sync
+peru reup
+git add peru.yaml
 
 echo "Building website documentation."
 mkdocs build > /dev/null
