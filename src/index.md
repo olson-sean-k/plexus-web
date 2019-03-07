@@ -12,9 +12,10 @@ Rust ecosystem, such as those found in the
 
 !!! warning
     Plexus is still in its initial development phase. Crates published to
-    https://crates.io in the `0.0.x` series do **not** obey SemVer and are
-    unstable. Dependencies should select an exact version until the public API
-    is stabalized in the `0.1.x` series.
+    [https://crates.io](https://crates.io) in the `0.0.x` series do **not** obey
+    [SemVer](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html)
+    and are unstable. Dependencies should select an exact version until the
+    public API is stabilized in the `0.1.x` series.
 
 ## Design
 
@@ -27,7 +28,10 @@ software.
 
 ## Examples
 
-Forming a "spikey" cube using a graph:
+The example below forms a "spikey cube" using a graph. A generator is used to
+produce positional data representing a cube as a stream of polygons. Those
+polygons are collected into a graph and then each face is poked, forming a
+triangle fan about a centroid vertex that is translated along the normal.
 
 ```rust
 use arrayvec::ArrayVec;
