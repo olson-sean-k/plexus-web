@@ -10,11 +10,6 @@ out_dir="$repo_dir"/out
 mkdocs_out_dir="$out_dir"/doc
 rustdoc_out_dir="$out_dir"/lib/target/doc
 
-if [ -n "$(git status --porcelain)" ] ; then
-    git status
-    exit 1
-fi
-
 mkdir -p "$out_dir"
 git rev-parse --short HEAD > "$out_dir"/hash
 
