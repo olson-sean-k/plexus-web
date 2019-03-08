@@ -33,10 +33,16 @@ graph traversals.
 
 ## Examples
 
-The example below forms a "spikey cube" using a graph. A generator is used to
-produce positional data representing a cube as a stream of polygons. Those
-polygons are collected into a graph and then each face is poked, forming a
-triangle fan about a centroid vertex that is translated along the normal.
+The following examples are provided without much context, but are shown to give
+a general idea of what using Plexus APIs looks like. Please see the [user
+guide](user-guide/getting-started.md) for more details.
+
+### Poking Faces in a Graph
+
+This example forms a "spikey cube" using a graph. A generator is used to produce
+positional data representing a cube as a stream of polygons. Those polygons are
+collected into a graph and then each face is poked, forming a triangle fan about
+a centroid vertex that is translated along the normal.
 
 ```rust
 use arrayvec::ArrayVec;
@@ -61,10 +67,12 @@ for key in keys {
 }
 ```
 
-The following complex example defines a function that subdivides a face in a
-graph. This is accomplished using only views; the originating `MeshGraph` is not
-required to implement the function. The function is generic over geometry and
-uses geometric traits in its type bounds.
+### Subdividing Faces in a Graph
+
+This advanced example defines a function that subdivides a face in a graph. This
+is accomplished using only views; the originating `MeshGraph` is not required to
+implement the function. The function is generic over geometry and uses geometric
+traits in its type bounds.
 
 ```rust
 use plexus::geometry::alias::VertexPosition;
