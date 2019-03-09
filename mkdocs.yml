@@ -10,10 +10,7 @@ repo_name: olson-sean-k/plexus
 edit_uri: ""
 
 nav:
-  - Home:
-    - About: index.md
-    - Contributing: contribute.md
-    - License: license.md
+  - Home: index.md
   - User Guide:
     - Getting Started: user-guide/getting-started.md
     - Generators: user-guide/generators.md
