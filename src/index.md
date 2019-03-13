@@ -18,14 +18,13 @@ Rust ecosystem, such as those found in the
     public API is stabilized in the `0.1.x` series.
 
 Unlike many other mesh processing libraries, Plexus avoids exposing low-level
-topological operations such as inserting individual vertices. These kinds of
-operations are easily performed incorrectly and often require manual
-verification. Instead, Plexus exposes more abstract operations that maintain
-topological consistency while being agnostic to geometry. Graphs are
+topological operations such as inserting individual vertices into a graph.
+These kinds of operations are easily performed incorrectly and often require
+manual verification. Instead, Plexus exposes more abstract operations that
+maintain topological consistency while being agnostic to geometry. Graphs are
 manipulated in a way that is more similar to 3D modeling software, for example.
 
-Please see the [user guide](user-guide/getting-started.md) to learn about using
-Plexus.
+Please see the [user guide](user-guide/getting-started.md) to get started.
 
 ## Contributing
 
@@ -34,10 +33,12 @@ Both the [code](https://github.com/olson-sean-k/plexus) and
 Plexus are hosted on GitHub.
 
 Plexus is developed, built, and tested using the latest stable release of Rust.
-It is also tested on the stable, beta, and nightly channels using Travis CI.
-Code is formatted using the nightly build of `rustfmt`. Please see the
+It is also tested on the stable, beta, and nightly [release
+channels](https://doc.rust-lang.org/book/release-channels.html) using Travis
+CI. Code is formatted using the nightly build of `rustfmt`. Please see the
 contribution documentation in each repository for more details.
 
 ## License
 
-Plexus is distributed under the MIT license.
+Plexus is distributed under the [MIT
+license](https://choosealicense.com/licenses/mit/).
