@@ -1,11 +1,12 @@
-Plexus provides a flexible representation of meshes as a [half-edge
+Plexus provides the `MeshGraph` type, which is a flexible representation of
+meshes as a [half-edge
 graph](https://en.wikipedia.org/wiki/doubly_connected_edge_list). Graphs can
 store arbitrary geometric data associated with any topological structure
-(vertices, arcs, edges, and faces).
+(including no geometry at all).
 
 !!! note
     Plexus refers to _half-edges_ and _edges_ as _arcs_ and _edges_,
-    respectively. Arcs and edges are distinct topological structures.
+    respectively.
 
 Geometry is vertex-based, meaning that geometric operations depend on vertex
 geometry exposing some notion of positional data via the `AsPosition` trait. If
@@ -29,21 +30,37 @@ _source vertex_.
 Every arc is paired with an _opposite arc_ with an opposing direction.  Given an
 arc from a vertex **A** to a vertex **B**, that arc will have an opposite arc
 from **B** to **A**. Such arcs are typically labeled **AB** and **BA**.
-Together, these arcs form an _edge_, which is not directed.  Occassionally, the
-term "edge" may refer to either an arc or an edge. Edges are typically labeled
-**AB+BA**.
+Together, these arcs form an _edge_, which is not directed. Edges are typically
+labeled **AB+BA**.
+
+!!! note
+    Occassionally, the term _edge_ may refer to either an arc or an edge. This
+    ambiguity is avoided, but it is sometimes convenient to describe edge-like
+    structures in aggregate.
 
 Arcs are connected to their neighbors, known as _next_ and _previous arcs_.
-When a face is present in the contiguous region formed by a perimeter of
-vertices and their arcs, the arcs will refer to that face and the face will
-refer to exactly one of the arcs in the interior. An arc with no associated face
-is known as a _boundary arc_. If both of an edge's arcs are boundary arcs, then
-that edge is a _disjoint edge_.
+When a face is present in the contiguous region formed by a perimeter of arcs,
+the arcs will refer to that face and the face will refer to exactly one of the
+arcs in the interior. An arc with no associated face is known as a _boundary
+arc_. If both of an edge's arcs are boundary arcs, then that edge is a _disjoint
+edge_.
 
 Together with vertices and faces, the connectivity of arcs allows for effecient
 traversals of topology. For example, it becomes trivial to find neighboring
 topologies, such as the faces that share a given vertex or the neighboring faces
 of a given face.
+
+A traversal along a series of arcs is a _path_. A path is _closed_ if it forms a
+loop and is _open_ if it terminates. The path formed by traversing from an arc
+to its next arc and so on is an _interior path_. Interior paths may or may not
+have associated faces.
+
+This data structure has some limitations. Importantly, only
+[orientable](https://en.wikipedia.org/wiki/orientability) compact
+[manifolds](https://en.wikipedia.org/wiki/surface_(topology)) can be
+represented. Unorientable manifolds such as a [Möbius
+strip](https://en.wikipedia.org/wiki/m%C3%B6bius_strip) and non-manifold
+structures such as edge fans cannot be modeled using `MeshGraph`.
 
 `MeshGraph`s store topological data using associative collections and mesh data
 is accessed using keys into this storage. Keys are exposed as strongly typed and

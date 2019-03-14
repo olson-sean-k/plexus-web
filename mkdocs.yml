@@ -13,6 +13,7 @@ nav:
   - Home: index.md
   - User Guide:
     - Getting Started: user-guide/getting-started.md
+    - Primitives: user-guide/primitives.md
     - Generators: user-guide/generators.md
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
