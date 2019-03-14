@@ -2,11 +2,12 @@
 
 **Plexus** is a [Rust library](https://crates.io/crates/plexus) for processing
 2D and 3D meshes. It provides primitives, generators, buffers, and graphs that
-are generic over their geometry. Plexus exposes traits that are used to derive
-geometric relationships and support common geometric operations. These traits
-can be implemented for any user type and are implemented for common types in the
-Rust ecosystem, such as those found in the
-[cgmath](https://crates.io/crates/cgmath),
+are generic over their geometry.
+
+Plexus exposes traits that are used to derive geometric relationships and
+support common geometric operations. These traits can be implemented for any
+user type and are implemented for common types in the Rust ecosystem, such as
+those found in the [cgmath](https://crates.io/crates/cgmath),
 [mint](https://crates.io/crates/mint), and
 [nalgebra](https://crates.io/crates/nalgebra) crates.
 
