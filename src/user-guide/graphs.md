@@ -1,16 +1,35 @@
 Plexus provides a flexible representation of meshes as a [half-edge
-graph](https://en.wikipedia.org/wiki/doubly_connected_edge_list) via the
-`MeshGraph` type. Graphs can store arbitrary geometric data associated with any
-topological structure (including no geometry at all).
+graph](https://en.wikipedia.org/wiki/doubly_connected_edge_list) via the `graph`
+module and `MeshGraph` type. Graphs can store arbitrary geometric data
+associated with any topological structure. Unlike generators, iterator
+expressions, and buffers, graphs provide efficient traversals and complex
+manipulation of meshes.
 
 Geometry is vertex-based, meaning that geometric operations depend on vertex
 geometry exposing some notion of positional data via the `AsPosition` trait. If
-geometry does not have this property, then spatial operations will not be
-available. Read more about geometric traits [here](../geometry.md).
+geometry does not have this property, then geometric operations will not be
+available. Read more about geometric traits [here](../geometry).
 
 !!! note
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
     where _arc_ typically refers to a directed adjacency.
+
+`MeshGraph`s can be created from [buffers](../buffers) and
+[generators](../generators).
+
+```rust
+// Create a graph of a two-dimensional quadrilateral from raw buffers.
+let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
+    vec![Quad::new(0usize, 1, 2, 3)],
+    vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)],
+)
+.unwrap();
+
+// Create a graph with positional data from a unit cube.
+let mut graph = Cube::new()
+    .polygons_with_position()
+    .collect<MeshGraph<Point3<f64>>>();
+```
 
 ## Representation
 
@@ -20,16 +39,16 @@ _faces_. The figure below summarizes the connectivity in a `MeshGraph`.
 ![Half-Edge Graph Figure](../img/heg.svg)
 
 Arcs are directed and connect vertices. An arc that is directed toward a vertex
-**A** is an _incoming arc_ with respect to **A**. Similarly, an arc directed
-away from such a vertex is an _outgoing arc_. Every vertex is associated with
-exactly one _leading arc_, which is always an outgoing arc. The vertex toward
-which an arc is directed is the arc's _destination vertex_ and the other is its
-_source vertex_.
+$A$ is an _incoming arc_ with respect to $A$. Similarly, an arc directed away
+from such a vertex is an _outgoing arc_. Every vertex is associated with exactly
+one _leading arc_, which is always an outgoing arc. The vertex toward which an
+arc is directed is the arc's _destination vertex_ and the other is its _source
+vertex_.
 
 Every arc is paired with and connected to an _opposite arc_ with an opposing
-direction. Given an arc from a vertex **A** to a vertex **B**, that arc will
-have an opposite arc from **B** to **A**. Such arcs are typically labeled **AB**
-and **BA**. Together, these arcs form an _edge_, which is not directed. An edge
+direction. Given an arc from a vertex $A$ to a vertex $B$, that arc will have an
+opposite arc from $B$ to $A$. Such arcs are typically notated $\vec{AB}$ and
+$\vec{BA}$. Together, these arcs form an _edge_, which is not directed. An edge
 and its two arcs are together called a _composite edge_.
 
 Arcs are connected to their neighbors, known as _next_ and _previous arcs_. A
@@ -61,10 +80,10 @@ opaque values, which can be used to refer to a topological structure.
 ## Topological Views
 
 `MeshGraph`s expose _views_ over their topological structure (vertices, arcs,
-edges, faces, and interior paths). Views are obtained using keys or iteration
-and behave similarly to references (e.g., `&'a u32` or `&'a mut f64`). They
-provide the primary API for interacting with a `MeshGraph`'s topology and
-geometry. There are three types of views summarized below:
+edges, and faces). Views are obtained using keys or iteration and behave
+similarly to references. They provide the primary API for interacting with a
+`MeshGraph`'s topology and geometry. There are three types of views summarized
+below:
 
 | Type      | Traversal | Exclusive | Geometry  | Topology  |
 |-----------|-----------|-----------|-----------|-----------|
@@ -73,7 +92,7 @@ geometry. There are three types of views summarized below:
 | Orphan    | No        | No        | Mutable   | N/A       |
 
 _Immutable_ and _mutable views_ behave similarly to references: immutable views
-cannot mutate a graph and are not exclusive and mutable views may mutate both
+cannot mutate a graph and are not exclusive while mutable views may mutate both
 the geometry and topology of a graph but are exclusive. This example uses a view
 to traverse a graph:
 
@@ -99,7 +118,8 @@ of a graph, but they do not have access to the topology of a graph. Because they
 do not know about other vertices, arcs, etc., orphan views cannot traverse a
 graph in any way. These views are most useful for modifying the geometry of a
 graph and, unlike mutable views, are not exclusive.
-[_Circulators_](#circulators) (iterators) emit orphan views.
+[_Circulators_](#circulators), which are iterators over topological structures
+in a graph, sometimes emit orphan views.
 
 ```rust
 // Create a graph with positional data from a UV-sphere.
@@ -124,36 +144,13 @@ traversal uses a _circulator_, which is a type of iterator that examines the
 neighbors of a topological structure. For example, the face circulator of a
 vertex yields all faces that share that vertex in order.
 
-Circulators allow for both immutable and mutable iteration.
-
-!!! note
-    Mutable circulators emit orphan views (**not** mutable views), because
-    mutable views require exclusive access. If multiple mutable views are
-    needed, it is possible to use an immutable circulator to collect the keys of
-    the target topology and then lookup each mutable view using those keys.
-
-Circulators generally begin iteration from a leading arc and then traverse
-topology in order from that arc. The order is deterministic.
-
-## Examples
-
-The following complete examples demonstrate how to construct and manipulate
-graphs in various ways.
-
-### Poking Faces
-
-This example forms a "spikey cube" using a graph. A generator is used to produce
-positional data representing a cube as a stream of polygons. Those polygons are
-collected into a graph and then each face is poked, forming a triangle fan about
-a centroid vertex that is translated along the normal.
+Circulators allow for both immutable and mutable iteration. Mutable circulators
+emit orphan views, because mutable views require exclusive access. To mutate
+topology using multiple mutable views, use an immutable circulator to collect
+the keys of the target topology and then lookup each mutable view using those
+keys.
 
 ```rust
-use arrayvec::ArrayVec;
-use nalgebra::Point3;
-use plexus::graph::MeshGraph;
-use plexus::prelude::*;
-use plexus::primitive::cube::Cube;
-
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
     .polygons_with_position()
@@ -165,57 +162,21 @@ let keys = graph
     .map(|face| face.key())
     .collect::<ArrayVec<[_; 6]>>();
 for key in keys {
+    // Get a mutable face view for each key.
     // Poke each face and translate the centroid along the face's normal.
-    let _ = graph.face_mut(key).unwrap().poke_with_offset(0.5);
+    let _ = graph.face_mut(key).expect("independent").poke_with_offset(0.5);
 }
 ```
 
-### Subdividing Faces
-
-This advanced example defines a function that subdivides a face in a graph. This
-is accomplished using only views; the originating `MeshGraph` is not required to
-implement the function. The function is generic over geometry and uses geometric
-traits in its type bounds.
-
-```rust
-use plexus::geometry::alias::VertexPosition;
-use plexus::geometry::compose::EdgeMidpoint;
-use plexus::geometry::convert::AsPosition;
-use plexus::geometry::Geometry;
-use plexus::graph::{FaceView, MeshGraph};
-use plexus::prelude::*;
-use smallvec::SmallVec;
-
-pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>
-where
-    G: EdgeMidpoint<Midpoint = VertexPosition<G>> + Geometry,
-    G::Vertex: AsPosition,
-{
-    // Split each edge, stashing the vertex key and moving to the next arc.
-    let arity = face.arity();
-    let mut arc = face.into_arc();
-    let mut splits = SmallVec::<[_; 4]>::with_capacity(arity);
-    for _ in 0..arity {
-        let vertex = arc.split_at_midpoint();
-        splits.push(vertex.key());
-        arc = vertex.into_outgoing_arc().into_next_arc();
-    }
-    // Split faces along the vertices from each arc split.
-    let mut face = arc.into_face().unwrap();
-    for (a, b) in splits.into_iter().perimeter() {
-        face = face.split(ByKey(a), ByKey(b)).unwrap().into_face().unwrap();
-    }
-    // Return the terminating face of the decomposition.
-    face
-}
-```
+Circulators generally begin iteration from a leading arc and then traverse
+topology in a deterministic order from that arc.
 
 ## Glossary
 
 The table below summarizes the terminology used to describe the components of a
 `MeshGraph`.
 
-| Terminology        | Definition                                                                                    |
-|--------------------|-----------------------------------------------------------------------------------------------|
-| source vertex      | The vertex from which an arc is directed. Given an arc **AB**, its source vertex is **A**.    |
-| destination vertex | The vertex to which an arc is directed. Given an arc **AB**, its destination vertex is **B**. |
+| Terminology        | Definition                                                                                      |
+|--------------------|-------------------------------------------------------------------------------------------------|
+| source vertex      | The vertex from which an arc is directed. Given an arc $\vec{AB}$, its source vertex is $A$.    |
+| destination vertex | The vertex to which an arc is directed. Given an arc $\vec{AB}$, its destination vertex is $B$. |

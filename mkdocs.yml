@@ -36,10 +36,13 @@ markdown_extensions:
   - admonition
   - codehilite:
       linenums: true
+  - pymdownx.arithmatex
   - toc:
       permalink: true
 
 extra:
+  # TODO: Enable when the site is ready.
+  # disqus: 'plexus-rs'
   social:
     - type: github
       link: https://github.com/olson-sean-k
@@ -47,3 +50,6 @@ extra:
       link: https://twitter.com/olsonseank
   search:
     language: en
+
+extra_javascript:
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
