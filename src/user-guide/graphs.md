@@ -9,16 +9,15 @@ geometry does not have this property, then spatial operations will not be
 available. Read more about geometric traits [here](user-guide/geometry.md).
 
 !!! note
-    Plexus refers to _half-edges_ as _arcs_. This terminology is uncommon in
-    mesh processing software, but is commonly used when describing graphs in
-    many other applications.
+    Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
+    where _arc_ typically refers to a directed adjacency.
 
 ## Representation
 
 A `MeshGraph` is conceptually composed of _vertices_, _arcs_, _edges_, and
 _faces_. The figure below summarizes the connectivity in a `MeshGraph`.
 
-![Half-Edge Graph Figure](https://raw.githubusercontent.com/olson-sean-k/plexus/master/doc/heg.svg?sanitize=true)
+![Half-Edge Graph Figure](../img/heg.svg)
 
 Arcs are directed and connect vertices. An arc that is directed toward a vertex
 **A** is an _incoming arc_ with respect to **A**. Similarly, an arc directed
@@ -30,13 +29,8 @@ _source vertex_.
 Every arc is paired with and connected to an _opposite arc_ with an opposing
 direction. Given an arc from a vertex **A** to a vertex **B**, that arc will
 have an opposite arc from **B** to **A**. Such arcs are typically labeled **AB**
-and **BA**. Together, these arcs form an _edge_, which is not directed. Edges
-are typically labeled **AB+BA**.
-
-!!! note
-    Occassionally, the term _edge_ may refer to either an arc or an edge. This
-    ambiguity is avoided, but it is sometimes convenient to describe edge-like
-    structures in aggregate.
+and **BA**. Together, these arcs form an _edge_, which is not directed. An edge
+and its two arcs are together called a _composite edge_.
 
 Arcs are connected to their neighbors, known as _next_ and _previous arcs_. A
 traversal along a series of arcs is a _path_. A path is _closed_ if it forms a
@@ -47,13 +41,13 @@ exactly one of the arcs in the interior path. An arc with no associated face is
 known as a _boundary arc_. If both of an edge's arcs are boundary arcs, then
 that edge is a _disjoint edge_.
 
-Together with vertices and faces, the connectivity of arcs allows for effecient
+Together with vertices and faces, the connectivity of arcs allows for efficient
 traversals of topology. For example, it becomes trivial to find neighboring
 topologies, such as the faces that share a given vertex or the neighboring faces
 of a given face.
 
 !!! warning
-    This data structure has some limitations. Importantly, only
+    The `MeshGraph` data structure has some limitations. Only
     [orientable](https://en.wikipedia.org/wiki/orientability) compact
     [manifolds](https://en.wikipedia.org/wiki/surface_(topology)) can be
     represented. Unorientable manifolds such as a [Möbius
@@ -137,3 +131,13 @@ where
     face
 }
 ```
+
+## Glossary
+
+The table below summarizes the terminology used to describe the components of a
+`MeshGraph`.
+
+| Terminology        | Definition                                                                                    |
+|--------------------|-----------------------------------------------------------------------------------------------|
+| source vertex      | The vertex to which an arc is directed. Given an arc **AB**, its destination vertex is **B**. |
+| destination vertex | The vertex from which an arc is directed. Given an arc **AB**, its source vertex is **A**.    |

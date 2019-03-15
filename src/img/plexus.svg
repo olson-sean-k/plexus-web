@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
    xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -8,54 +6,24 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="760"
-   height="760"
-   viewBox="0 0 201.08333 201.08333"
-   version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="plexus.svg">
+   version="1.1"
+   viewBox="0 0 201.08333 201.08333"
+   height="760"
+   width="760">
   <title
      id="title4873">Plexus</title>
   <defs
      id="defs2">
     <linearGradient
-       id="linearGradient6360"
-       osb:paint="solid">
+       osb:paint="solid"
+       id="linearGradient6360">
       <stop
-         style="stop-color:#ffd34b;stop-opacity:1;"
+         id="stop6358"
          offset="0"
-         id="stop6358" />
+         style="stop-color:#ffd34b;stop-opacity:1;" />
     </linearGradient>
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.97625"
-     inkscape:cx="309.24042"
-     inkscape:cy="423.03713"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="true"
-     units="px"
-     inkscape:window-width="2498"
-     inkscape:window-height="1417"
-     inkscape:window-x="54"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:pagecheckerboard="true"
-     objecttolerance="20">
-    <inkscape:grid
-       type="xygrid"
-       id="grid3986"
-       dotted="false" />
-  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -69,37 +37,34 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-95.916672)">
+     transform="translate(0,-95.916672)"
+     id="layer1">
     <path
-       style="fill:none;stroke:#ffd34b;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
-       d="M 47.624999,143.54167 V 252.02084 L 153.45833,196.45834 Z"
        id="path4606"
-       inkscape:connector-curvature="0" />
+       d="M 47.624999,143.54167 V 252.02084 L 153.45833,196.45834 Z"
+       style="fill:none;stroke:#ffd34b;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
     <g
-       aria-label="PLEXUS"
-       transform="matrix(0.68982218,0,0,0.68982218,-345.56157,98.089205)"
+       id="flowRoot4865"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:170.66667175px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#9a0089;fill-opacity:1;stroke:none"
-       id="flowRoot4865" />
+       transform="matrix(0.68982218,0,0,0.68982218,-345.56157,98.089205)"
+       aria-label="PLEXUS" />
     <circle
-       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4574"
-       cx="47.625"
+       r="34.395832"
        cy="143.54167"
-       r="34.395832" />
-    <circle
-       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4574-3"
        cx="47.625"
-       cy="249.375"
-       r="34.395832" />
+       id="path4574"
+       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <circle
-       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4574-3-6"
-       cx="153.45834"
+       r="34.395832"
+       cy="249.375"
+       cx="47.625"
+       id="path4574-3"
+       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+    <circle
+       r="34.395832"
        cy="196.45833"
-       r="34.395832" />
+       cx="153.45834"
+       id="path4574-3-6"
+       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
   </g>
 </svg>
