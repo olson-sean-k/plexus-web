@@ -6,7 +6,7 @@ topological structure (including no geometry at all).
 Geometry is vertex-based, meaning that geometric operations depend on vertex
 geometry exposing some notion of positional data via the `AsPosition` trait. If
 geometry does not have this property, then spatial operations will not be
-available. Read more about geometric traits [here](user-guide/geometry.md).
+available. Read more about geometric traits [here](../geometry.md).
 
 !!! note
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
@@ -58,9 +58,87 @@ of a given face.
 is accessed using keys into this storage. Keys are exposed as strongly typed and
 opaque values, which can be used to refer to a topological structure.
 
+## Topological Views
+
+`MeshGraph`s expose _views_ over their topological structure (vertices, arcs,
+edges, faces, and interior paths). Views are obtained using keys or iteration
+and behave similarly to references (e.g., `&'a u32` or `&'a mut f64`). They
+provide the primary API for interacting with a `MeshGraph`'s topology and
+geometry. There are three types of views summarized below:
+
+| Type      | Traversal | Exclusive | Geometry  | Topology  |
+|-----------|-----------|-----------|-----------|-----------|
+| Immutable | Yes       | No        | Immutable | Immutable |
+| Mutable   | Yes       | Yes       | Mutable   | Mutable   |
+| Orphan    | No        | No        | Mutable   | N/A       |
+
+_Immutable_ and _mutable views_ behave similarly to references: immutable views
+cannot mutate a graph and are not exclusive and mutable views may mutate both
+the geometry and topology of a graph but are exclusive. This example uses a view
+to traverse a graph:
+
+```rust
+// Create a graph with positional data from a unit cube.
+let mut graph = Cube::new()
+    .polygons_with_position()
+    .collect::<MeshGraph<Point3<f64>>>();
+
+// Get a view of a face and its opposite face.
+let face = graph.faces().nth(0).expect("cube");
+let opposite = face
+    .into_arc()
+    .into_opposite_arc()
+    .into_next_arc()
+    .into_next_arc()
+    .into_face()
+    .expect("cube");
+```
+
+_Orphan views_ are similar to mutable views in that they may mutate the geometry
+of a graph, but they do not have access to the topology of a graph. Because they
+do not know about other vertices, arcs, etc., orphan views cannot traverse a
+graph in any way. These views are most useful for modifying the geometry of a
+graph and, unlike mutable views, are not exclusive.
+[_Circulators_](#circulators) (iterators) emit orphan views.
+
+```rust
+// Create a graph with positional data from a UV-sphere.
+let mut graph = UvSphere::new(8, 8)
+    .polygons_with_position()
+    .collect::<MeshGraph<Point3<f64>>>();
+
+// Scale the position data in all vertices.
+for mut vertex in graph.orphan_vertices() {
+    vertex.geometry *= 2.0;
+}
+```
+
+Immutable and mutable views are both represented by view types, such as
+`FaceView`. Orphan views are represented by orphan view types, such as
+`OrphanFaceView`.
+
+## Circulators
+
+Topological views allow for traversal of a graph's topology. One useful type of
+traversal uses a _circulator_, which is a type of iterator that examines the
+neighbors of a topological structure. For example, the face circulator of a
+vertex yields all faces that share that vertex in order.
+
+Circulators allow for both immutable and mutable iteration.
+
+!!! note
+    Mutable circulators emit orphan views (**not** mutable views), because
+    mutable views require exclusive access. If multiple mutable views are
+    needed, it is possible to use an immutable circulator to collect the keys of
+    the target topology and then lookup each mutable view using those keys.
+
+Circulators generally begin iteration from a leading arc and then traverse
+topology in order from that arc. The order is deterministic.
+
 ## Examples
 
-The following examples demonstrate how to construct and manipulate graphs.
+The following complete examples demonstrate how to construct and manipulate
+graphs in various ways.
 
 ### Poking Faces
 
@@ -77,7 +155,7 @@ use plexus::prelude::*;
 use plexus::primitive::cube::Cube;
 
 // Create a graph with positional data from a unit cube.
-let mut mesh = Cube::new()
+let mut graph = Cube::new()
     .polygons_with_position()
     .collect::<MeshGraph<Point3<f64>>>();
 
@@ -139,5 +217,5 @@ The table below summarizes the terminology used to describe the components of a
 
 | Terminology        | Definition                                                                                    |
 |--------------------|-----------------------------------------------------------------------------------------------|
-| source vertex      | The vertex to which an arc is directed. Given an arc **AB**, its destination vertex is **B**. |
-| destination vertex | The vertex from which an arc is directed. Given an arc **AB**, its source vertex is **A**.    |
+| source vertex      | The vertex from which an arc is directed. Given an arc **AB**, its source vertex is **A**.    |
+| destination vertex | The vertex to which an arc is directed. Given an arc **AB**, its destination vertex is **B**. |
