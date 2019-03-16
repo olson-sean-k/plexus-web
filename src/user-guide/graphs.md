@@ -69,8 +69,8 @@ of a given face.
     The `MeshGraph` data structure has some limitations. Only
     [orientable](https://en.wikipedia.org/wiki/orientability) compact
     [manifolds](https://en.wikipedia.org/wiki/surface_(topology)) can be
-    represented. Unorientable manifolds such as a [Möbius
-    strip](https://en.wikipedia.org/wiki/m%C3%B6bius_strip) and non-manifold
+    represented. Unorientable manifolds such as [Möbius
+    strips](https://en.wikipedia.org/wiki/m%C3%B6bius_strip) and non-manifold
     structures such as edge fans cannot be modeled using `MeshGraph`.
 
 `MeshGraph`s store topological data using associative collections and mesh data
@@ -109,6 +109,7 @@ let opposite = face
     .into_opposite_arc()
     .into_next_arc()
     .into_next_arc()
+    .into_opposite_arc()
     .into_face()
     .expect("cube");
 ```
