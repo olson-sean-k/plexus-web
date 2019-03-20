@@ -56,9 +56,9 @@ traversal along a series of arcs is a _path_. A path is _closed_ if it forms a
 loop and is _open_ if it terminates. The path formed by traversing from an arc
 to its next arc and so on is an _interior path_. When a face is present within
 an interior path, the arcs will refer to that face and the face will refer to
-exactly one of the arcs in the interior path. An arc with no associated face is
-known as a _boundary arc_. If both of an edge's arcs are boundary arcs, then
-that edge is a _disjoint edge_.
+exactly one of the arcs in the interior path (its leading arc). An arc with no
+associated face is known as a _boundary arc_. If both of an edge's arcs are
+boundary arcs, then that edge is a _disjoint edge_.
 
 Together with vertices and faces, the connectivity of arcs allows for efficient
 traversals of topology. For example, it becomes trivial to find neighboring
@@ -118,9 +118,8 @@ _Orphan views_ are similar to mutable views in that they may mutate the geometry
 of a graph, but they do not have access to the topology of a graph. Because they
 do not know about other vertices, arcs, etc., orphan views cannot traverse a
 graph in any way. These views are most useful for modifying the geometry of a
-graph and, unlike mutable views, are not exclusive.
-[_Circulators_](#circulators), which are iterators over topological structures
-in a graph, sometimes emit orphan views.
+graph and, unlike mutable views, are not exclusive. Iterators over topological
+structures in a graph sometimes emit orphan views.
 
 ```rust
 // Create a graph with positional data from a UV-sphere.
@@ -134,22 +133,54 @@ for mut vertex in graph.orphan_vertices() {
 }
 ```
 
+There are two types of direct traversals exposed by views: _consuming
+traversals_ and _borrowing traversals_. Consuming traversals consume a view and
+emit another view. Borrowing traversals only borrow a view and use that borrow
+to construct another view. Borrowing traversals only expose immutable views with
+a limited lifetime while consuming traversals expose views with the same
+lifetime and mutability.
+
+```rust
+// Get a mutable view of a vertex in a graph.
+let vertex = graph.vertex_mut(key).unwrap();
+
+let arc = vertex.into_outgoing_arc(); // Consumes `vertex`. `arc` is mutable.
+let opposite = arc.opposite_arc(); // Borrows `arc`. `opposite` is immutable.
+```
+
+Consuming traversals are named like conversions and borrowing traversals are
+named like accessors. For example, `into_outgoing_arc` is consuming and
+`outgoing_arc` is borrowing.
+
+!!! note
+    For fallible traversals that maintain mutability, the more advanced
+    `with_ref` function can be used. This function either returns a view with
+    the originating mutability or the originating view.
+
 Immutable and mutable views are both represented by view types, such as
 `FaceView`. Orphan views are represented by orphan view types, such as
 `OrphanFaceView`.
 
-## Circulators
+## Iterators and Circulators
 
 Topological views allow for traversal of a graph's topology. One useful type of
 traversal uses a _circulator_, which is a type of iterator that examines the
 neighbors of a topological structure. For example, the face circulator of a
 vertex yields all faces that share that vertex in order.
 
-Circulators allow for both immutable and mutable iteration. Mutable circulators
-emit orphan views, because mutable views require exclusive access. To mutate
-topology using multiple mutable views, use an immutable circulator to collect
-the keys of the target topology and then lookup each mutable view using those
-keys.
+```rust
+for face in vertex.neighboring_faces() {
+    for arc in face.interior_arcs() {
+        // ...
+    }
+}
+```
+
+`MeshGraph`s also directly expose topological structures via iterators, but
+without a deterministic ordering. Mutable iterators (including circulators) emit
+orphan views, because mutable views require exclusive access. To mutate topology
+using multiple mutable views, use an immutable circulator to collect the keys of
+the target topology and then lookup each mutable view using those keys.
 
 ```rust
 // Create a graph with positional data from a unit cube.
@@ -177,7 +208,9 @@ topology in a deterministic order from that arc.
 The table below summarizes the terminology used to describe the components of a
 `MeshGraph`.
 
-| Terminology        | Definition                                                                                      |
+| Term               | Definition                                                                                      |
 |--------------------|-------------------------------------------------------------------------------------------------|
 | source vertex      | The vertex from which an arc is directed. Given an arc $\vec{AB}$, its source vertex is $A$.    |
 | destination vertex | The vertex to which an arc is directed. Given an arc $\vec{AB}$, its destination vertex is $B$. |
+| boundary arc       | An arc that does not have an associated face.                                                   |
+| leading arc        | An arc that connects a topological structure (vertex or face) to paths in a graph.              |
