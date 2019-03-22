@@ -203,6 +203,65 @@ for key in keys {
 Circulators generally begin iteration from a leading arc and then traverse
 topology in a deterministic order from that arc.
 
+## Topological Mutations
+
+Mutable views expose topological mutations that alter the structure of a graph.
+These operations are always consuming, because they often invalidate the view
+that initiates them.
+
+```rust
+// Splitting an arc returns the vertex that subdivides the composite edge.
+let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
+```
+
+Most mutations return a view over a modified or newly inserted topological
+structure that can be used to further traverse the graph. For example, splitting
+an arc $\vec{AB}$ returns a vertex $M$ that subdivides the composite edge. The
+leading arc of $M$ is $\vec{MB}$ and is a part of the same interior path as the
+initiating arc.
+
+Graphs also expose mutations that may operate over any and all topological
+structures.
+
+```rust
+let cube = Cube::new();
+let mut graph = primitive::zip_vertices((
+    cube.polygons_with_position(),
+    cube.polygons_with_uv_map(),
+))
+.collect::<MeshGraph<Textured>>();
+
+graph.triangulate(); // Triangulates all faces in the graph.
+```
+
+Topological mutations expose spatial functions for types that implement certain
+geometric traits, such as `split_at_midpoint`. Views also expose purely
+topological functions, which can always be used (even if the geometry is
+non-spatial).
+
+```rust
+pub enum Weight {}
+
+impl Geometry for Weight {
+    type Vertex = f64;
+    type Arc = ();
+    type Edge = ();
+    type Face = ();
+}
+
+let mut graph = MeshGraph::<Weight>::from_raw_buffers(
+    vec![Triangle::new(0usize, 1, 2)],
+    vec![1.0, 2.0, 0.5],
+)
+.unwrap();
+let key = graph.arcs().nth(0).unwrap().key();
+let vertex = graph.arc_mut(key).unwrap().split_with(|| 0.1);
+```
+
+In the above example, `split_with` accepts a function that returns geometry for
+the subdividing vertex of the split. Similar functions exist for other
+topological mutations as well, such as `poke_with`.
+
 ## Glossary
 
 The table below summarizes the terminology used to describe the components of a
@@ -212,5 +271,6 @@ The table below summarizes the terminology used to describe the components of a
 |--------------------|-------------------------------------------------------------------------------------------------|
 | source vertex      | The vertex from which an arc is directed. Given an arc $\vec{AB}$, its source vertex is $A$.    |
 | destination vertex | The vertex to which an arc is directed. Given an arc $\vec{AB}$, its destination vertex is $B$. |
-| boundary arc       | An arc that does not have an associated face.                                                   |
-| leading arc        | An arc that connects a topological structure (vertex or face) to paths in a graph.              |
+| boundary arc       | An arc whose interior path has no associated face.                                              |
+| leading arc        | An arc that connects a vertex or face to paths in a graph.                                      |
+| interior path      | The closed path formed by traversing from an arc to its next arc and so on.                     |
