@@ -96,7 +96,7 @@ cannot mutate a graph and are not exclusive while mutable views may mutate both
 the geometry and topology of a graph but are exclusive. This example uses a view
 to traverse a graph:
 
-```rust hl_lines="8 15"
+```rust hl_lines="8 9 10 11 12 13 14 15"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
     .polygons_with_position()
@@ -121,7 +121,7 @@ graph in any way. These views are most useful for modifying the geometry of a
 graph and, unlike mutable views, are not exclusive. Iterators over topological
 structures in a graph sometimes emit orphan views.
 
-```rust hl_lines="7 9"
+```rust hl_lines="7 8 9"
 // Create a graph with positional data from a UV-sphere.
 let mut graph = UvSphere::new(8, 8)
     .polygons_with_position()
@@ -182,7 +182,7 @@ orphan views, because mutable views require exclusive access. To mutate topology
 using multiple mutable views, use an immutable circulator to collect the keys of
 the target topology and then lookup each mutable view using those keys.
 
-```rust hl_lines="7 10"
+```rust hl_lines="7 8 9 10"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
     .polygons_with_position()
