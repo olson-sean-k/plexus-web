@@ -30,15 +30,12 @@ plexus = "0.0.11" # Unstable. Require exact version.
 
 Plexus exposes two kinds of [Cargo
 features](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section):
-_geometry_ and _IO_.
+_geometry features_ and _IO features_.
 
 Geometry features integrate with math crates and optionally implement [geometric
 traits](../geometry) for types in those crates. These features are prefixed with
-`geometry-`, such as `geometry-nalgebra`.
-
-!!! note
-    It is highly recommended to enable the geometry feature if a supported crate
-    is used for geometric types.
+`geometry-`, such as `geometry-nalgebra`. It is highly recommended to enable the
+geometry feature if a supported crate is used for geometric types.
 
 IO features expose sub-modules in the `io` module for mesh formats and encodings
 that can be used to serialize and deserialize mesh data. These features are
