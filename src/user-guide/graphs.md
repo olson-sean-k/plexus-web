@@ -209,19 +209,35 @@ Mutable views expose topological mutations that alter the structure of a graph.
 These operations are always consuming, because they often invalidate the view
 that initiates them.
 
-```rust
-// Splitting an arc returns the vertex that subdivides the composite edge.
-let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
-```
-
 Most mutations return a view over a modified or newly inserted topological
 structure that can be used to further traverse the graph. For example, splitting
 an arc $\vec{AB}$ returns a vertex $M$ that subdivides the composite edge. The
 leading arc of $M$ is $\vec{MB}$ and is a part of the same interior path as the
 initiating arc.
 
-Graphs also expose mutations that may operate over any and all topological
-structures.
+```rust
+let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
+```
+
+It is possible to downgrade mutable views into immutable views using `into_ref`.
+This can be useful when perfomring topological mutations, as it allows for any
+number of traversals immediately after the mutation is performed.
+
+```rust
+// Split an arc and use `into_ref` to get an immutable view.
+let vertex = arc.split_at_midpoint().into_ref();
+
+// `vertex` is immutable and implements `Copy`.
+let source = vertex
+    .into_outgoing_arc()
+    .into_previous_arc()
+    .into_source_vertex();
+let destination = vertex.into_outgoing_arc().into_destination_vertex();
+let span = (source, destination);
+```
+
+Graphs also expose aggregate mutations that may operate over any and all
+topological structures.
 
 ```rust
 let cube = Cube::new();
@@ -229,7 +245,7 @@ let mut graph = primitive::zip_vertices((
     cube.polygons_with_position(),
     cube.polygons_with_uv_map(),
 ))
-.collect::<MeshGraph<Textured>>();
+.collect::<MeshGraph<Texture>>();
 
 graph.triangulate(); // Triangulates all faces in the graph.
 ```
@@ -253,8 +269,8 @@ let mut graph = MeshGraph::<Weight>::from_raw_buffers(
     vec![Triangle::new(0usize, 1, 2)],
     vec![1.0, 2.0, 0.5],
 )
-.unwrap();
-let key = graph.arcs().nth(0).unwrap().key();
+.expect("triangle");
+let key = graph.arcs().nth(0).expect("triangle").key();
 let vertex = graph.arc_mut(key).unwrap().split_with(|| 0.1);
 ```
 
