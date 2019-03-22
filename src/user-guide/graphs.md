@@ -96,7 +96,7 @@ cannot mutate a graph and are not exclusive while mutable views may mutate both
 the geometry and topology of a graph but are exclusive. This example uses a view
 to traverse a graph:
 
-```rust
+```rust hl_lines="8 15"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
     .polygons_with_position()
@@ -121,7 +121,7 @@ graph in any way. These views are most useful for modifying the geometry of a
 graph and, unlike mutable views, are not exclusive. Iterators over topological
 structures in a graph sometimes emit orphan views.
 
-```rust
+```rust hl_lines="7 9"
 // Create a graph with positional data from a UV-sphere.
 let mut graph = UvSphere::new(8, 8)
     .polygons_with_position()
@@ -182,7 +182,7 @@ orphan views, because mutable views require exclusive access. To mutate topology
 using multiple mutable views, use an immutable circulator to collect the keys of
 the target topology and then lookup each mutable view using those keys.
 
-```rust
+```rust hl_lines="7 10"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
     .polygons_with_position()
@@ -223,7 +223,7 @@ It is possible to downgrade mutable views into immutable views using `into_ref`.
 This can be useful when perfomring topological mutations, as it allows for any
 number of traversals immediately after the mutation is performed.
 
-```rust
+```rust hl_lines="2"
 // Split an arc and use `into_ref` to get an immutable view.
 let vertex = arc.split_at_midpoint().into_ref();
 
@@ -239,7 +239,7 @@ let span = (source, destination);
 Graphs also expose aggregate mutations that may operate over any and all
 topological structures.
 
-```rust
+```rust hl_lines="8"
 let cube = Cube::new();
 let mut graph = primitive::zip_vertices((
     cube.polygons_with_position(),
@@ -255,7 +255,7 @@ geometric traits, such as `split_at_midpoint`. Views also expose purely
 topological functions, which can always be used (even if the geometry is
 non-spatial).
 
-```rust
+```rust hl_lines="16"
 pub enum Weight {}
 
 impl Geometry for Weight {
