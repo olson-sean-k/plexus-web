@@ -12,12 +12,13 @@ plexus = "0.0.11" # Unstable. Require exact version.
     failures between releases.
 
 Plexus interacts with other crates in the Rust ecosystem. Most importantly, it
-uses [Decorum](https://crates.io/crates/decorum) for constrained and hashable
-float-point types and various math crates to represent mesh geometry.
+uses [decorum](https://crates.io/crates/decorum) for constrained and hashable
+floating-point types and various mathematics crates to represent mesh geometry.
 [nalgebra](https://crates.io/crates/nalgebra) is highly recommended for
-geometric types, but other crates like [cgmath](https://crates.io/crates/cgmath)
-and [mint](https://crates.io/crates/mint) are also supported. Consider also
-taking dependencies on these crates.
+geometric types, but other crates like
+[cgmath](https://crates.io/crates/cgmath) and
+[mint](https://crates.io/crates/mint) are also supported. Consider also taking
+dependencies on these crates.
 
 ```toml
 [dependencies]
@@ -32,10 +33,11 @@ Plexus exposes two kinds of [Cargo
 features](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section):
 _geometry features_ and _IO features_.
 
-Geometry features integrate with math crates and optionally implement [geometric
-traits](../geometry) for types in those crates. These features are prefixed with
-`geometry-`, such as `geometry-nalgebra`. It is highly recommended to enable the
-geometry feature if a supported crate is used for geometric types.
+Geometry features integrate with mathematics crates and optionally implement
+[geometric traits](../geometry) for types in those crates. These features are
+prefixed with `geometry-`, such as `geometry-nalgebra`. It is highly
+recommended to enable the geometry feature if a supported crate is used for
+geometric types.
 
 IO features expose sub-modules in the `io` module for mesh formats and encodings
 that can be used to serialize and deserialize mesh data. These features are
