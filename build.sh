@@ -18,7 +18,6 @@ which git > /dev/null
 which peru > /dev/null
 
 peru reup
-git add peru.yaml
 
 echo "Building website documentation."
 mkdocs build > /dev/null
