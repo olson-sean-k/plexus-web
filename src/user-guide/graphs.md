@@ -5,11 +5,6 @@ associated with any topological structure. Unlike generators, iterator
 expressions, and buffers, graphs provide efficient traversals and complex
 manipulation of meshes.
 
-Geometry is vertex-based, meaning that geometric operations depend on vertex
-geometry exposing some notion of positional data via the `AsPosition` trait. If
-geometry does not have this property, then geometric operations will not be
-available. Read more about geometric traits [here](../geometry).
-
 !!! note
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
     where _arc_ typically refers to a directed adjacency.
@@ -76,6 +71,38 @@ of a given face.
 `MeshGraph`s store topological data using associative collections and mesh data
 is accessed using keys into this storage. Keys are exposed as strongly typed and
 opaque values, which can be used to refer to a topological structure.
+
+## Geometry
+
+`MeshGraph` exposes a type parameter that determines the representation of
+geometry in a graph. This type must implement the `Geometry` trait.
+
+```rust
+pub struct Vertex {
+    pub position: Point3<R64>,
+    pub normal: Vector3<R64>,
+}
+
+impl Geometry for Vertex {
+    type Vertex = Self;
+    type Arc = ();
+    type Edge = ();
+    type Face = ();
+}
+
+let mut graph = MeshGraph::<Vertex>::new();
+```
+
+!!! note
+    Most examples on this page use the `Point2` and `Point3` types from the
+    [nalgebra](https://crates.io/crates/nalgebra) crate for graph geometry.
+    These types implement `Geometry` and represent positional data in vertices
+    within the graph.
+
+Geometry is vertex-based, meaning that geometric operations depend on vertex
+geometry exposing some notion of positional data via the `AsPosition` trait. If
+geometry does not have this property, then geometric operations will not be
+available. Read more about geometric traits [here](../geometry).
 
 ## Topological Views
 
@@ -277,16 +304,3 @@ let vertex = graph.arc_mut(key).unwrap().split_with(|| 0.1);
 In the above example, `split_with` accepts a function that returns geometry for
 the subdividing vertex of the split. Similar functions exist for other
 topological mutations as well, such as `poke_with`.
-
-## Glossary
-
-The table below summarizes the terminology used to describe the components of a
-`MeshGraph`.
-
-| Term               | Definition                                                                                      |
-|--------------------|-------------------------------------------------------------------------------------------------|
-| source vertex      | The vertex from which an arc is directed. Given an arc $\vec{AB}$, its source vertex is $A$.    |
-| destination vertex | The vertex to which an arc is directed. Given an arc $\vec{AB}$, its destination vertex is $B$. |
-| boundary arc       | An arc whose interior path has no associated face.                                              |
-| leading arc        | An arc that connects a vertex or face to paths in a graph.                                      |
-| interior path      | The closed path formed by traversing from an arc to its next arc and so on.                     |
