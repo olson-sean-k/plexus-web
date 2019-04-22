@@ -23,7 +23,7 @@ echo "Building website documentation."
 mkdocs build > /dev/null
 
 echo "Building API documentation."
-cargo +nightly doc --manifest-path="$out_dir"/lib/Cargo.toml -p plexus --no-deps > /dev/null
+"$out_dir"/lib/rustdoc.sh --manifest-path="$out_dir"/lib/Cargo.toml > /dev/null
 rm -rf "$mkdocs_out_dir"/rustdoc
 cp -r "$rustdoc_out_dir" "$mkdocs_out_dir"/rustdoc
 
