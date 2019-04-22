@@ -15,10 +15,10 @@ nav:
     - Getting Started: user-guide/getting-started.md
     - Primitives: user-guide/primitives.md
     - Indexing: user-guide/indexing.md
+    - Geometry: user-guide/geometry.md
     - Generators: user-guide/generators.md
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
-    - Geometry: user-guide/geometry.md
   - API Documentation:
     - plexus: rustdoc/plexus/index.html
 

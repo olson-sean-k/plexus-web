@@ -72,7 +72,7 @@ of a given face.
 is accessed using keys into this storage. Keys are exposed as strongly typed and
 opaque values, which can be used to refer to a topological structure.
 
-## Geometry
+## The `Geometry` Trait
 
 `MeshGraph` exposes a type parameter that determines the representation of
 geometry in a graph. This type must implement the `Geometry` trait.
@@ -102,7 +102,7 @@ let mut graph = MeshGraph::<Vertex>::new();
 Geometry is vertex-based, meaning that geometric operations depend on vertex
 geometry exposing some notion of positional data via the `AsPosition` trait. If
 geometry does not have this property, then geometric operations will not be
-available. Read more about geometric traits [here](../geometry).
+available. Read more about geometric and spatial traits [here](../geometry).
 
 ## Topological Views
 
