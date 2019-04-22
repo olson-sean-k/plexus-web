@@ -10,12 +10,12 @@ out_dir="$repo_dir"/out
 mkdocs_out_dir="$out_dir"/doc
 rustdoc_out_dir="$out_dir"/lib/target/doc
 
-mkdir -p "$out_dir"
-git rev-parse --short HEAD > "$out_dir"/hash
-
 which cargo > /dev/null
 which git > /dev/null
 which peru > /dev/null
+
+mkdir -p "$out_dir"
+git rev-parse --short HEAD > "$out_dir"/hash
 
 peru reup
 
