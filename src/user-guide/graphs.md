@@ -73,10 +73,11 @@ of a given face.
 is accessed using keys into this storage. Keys are exposed as strongly typed and
 opaque values, which can be used to refer to a topological structure.
 
-## The `Geometry` Trait
+## Specifying Geometry
 
 `MeshGraph` exposes a type parameter that determines the representation of
-geometry in a graph. This type must implement the `Geometry` trait.
+geometry in a graph. This type must implement the `Geometry` trait, which
+specifies which types are used for geometry in vertices, arcs, edges, and faces.
 
 ```rust
 pub struct Vertex {
