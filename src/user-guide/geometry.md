@@ -32,13 +32,13 @@ let mut graph = Cube::new()
     .collect::<MeshGraph<Point3<f64>>>(); // Positions are `Point3<f64>`.
 ```
 
-## Composed Traits
+## Graph Traits
 
-The `geometry::compose` module provides traits that express the geometric
-capabilities of a [graph](../graphs) by composing operational and conversion
-traits. These can be used to write generic code that requires particular
-geometric operations, such as computing edge midpoints. This example subdivides
-a face in a mesh by splitting arcs at their midpoints:
+The `graph` module provides traits that express the geometric capabilities of a
+[graph](../graphs) by composing operational and conversion traits. These can be
+used to write generic code that requires particular geometric operations, such
+as computing edge midpoints. This example subdivides a face in a mesh by
+splitting arcs at their midpoints:
 
 ```rust
 pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>
