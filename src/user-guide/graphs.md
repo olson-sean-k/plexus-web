@@ -56,8 +56,8 @@ with no associated face is known as a _boundary arc_. If both of an edge's arcs
 are boundary arcs, then that edge is a _disjoint edge_.
 
 A path is _closed_ if it forms a loop and is _open_ if it terminates. For paths
-over vertices $A$, $B$, and $C$, an open path is labeled $\overrightarrow{\\{A,
-B, C\\}}$ and a closed path is labeled $\overleftrightarrow{\\{A, B, C\\}}$.
+over vertices $A$, $B$, and $C$, an open path is labeled $\overrightarrow{\{A,
+B, C\}}$ and a closed path is labeled $\overleftrightarrow{\{A, B, C\}}$.
 
 Together with vertices and faces, the connectivity of arcs allows for efficient
 traversals of topology. For example, it becomes trivial to find neighboring
