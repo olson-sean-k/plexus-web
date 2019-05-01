@@ -34,16 +34,25 @@ features](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-s
 _geometry features_ and _IO features_.
 
 Geometry features integrate with mathematics crates and optionally implement
-[geometric traits](../geometry) for types in those crates. These features are
-prefixed with `geometry-`, such as `geometry-nalgebra`. It is highly
-recommended to enable the geometry feature if a supported crate is used for
-geometric types.
+[geometric traits](../geometry) for types in those crates. It is highly
+recommended to enable the corresponding geometry feature if a supported crate is
+used for geometric types.
+
+| Feature             | Default | Crate    | Support  |
+|---------------------|---------|----------|----------|
+| `geometry-cgmath`   | No      | cgmath   | Complete |
+| `geometry-mint`     | No      | mint     | Partial  |
+| `geometry-nalgebra` | Yes     | nalgebra | Complete |
 
 IO features expose sub-modules in the `io` module for mesh formats and encodings
-that can be used to serialize and deserialize mesh data. These features are
-prefixed with `io-`. For example, the `io-ply` feature enables the `io::ply`
+that can be used to serialize and deserialize mesh data.
+For example, the `io-ply` feature enables the `io::ply`
 module and [PLY](https://en.wikipedia.org/wiki/ply_(file_format)) encoding
 features.
+
+| Feature  | Default | Encoding | Read | Write |
+|----------|---------|----------|------|-------|
+| `io-ply` | No      | PLY      | Yes  | Yes   |
 
 To configure features, specify a dependency on Plexus in `Cargo.toml` as seen
 below.
@@ -56,8 +65,6 @@ features = [
 ]
 version = "0.0.11" # Unstable. Require exact version.
 ```
-
-By default, the `geometry-nalgebra` feature is enabled.
 
 ## Prelude Module
 
