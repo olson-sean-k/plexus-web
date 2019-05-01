@@ -53,11 +53,10 @@ an arc to its next arc and so on is an _interior path_. When a face is present
 within an interior path, the arcs will refer to that face and the face will
 refer to exactly one of the arcs in the interior path (its leading arc). An arc
 with no associated face is known as a _boundary arc_. If both of an edge's arcs
-are boundary arcs, then that edge is a _disjoint edge_.
+are boundary arcs, then that edge is an _unbounded edge_.
 
-A path is _closed_ if it forms a loop and is _open_ if it terminates. For paths
-over vertices $A$, $B$, and $C$, an open path is labeled $\overrightarrow{\{A,
-B, C\}}$ and a closed path is labeled $\overleftrightarrow{\{A, B, C\}}$.
+A path is _closed_ if it forms a loop and is _open_ if it terminates. A path
+over vertices $A$, $B$, and $C$ is notated $\overrightarrow{\{A, B, C\}}$.
 
 Together with vertices and faces, the connectivity of arcs allows for efficient
 traversals of topology. For example, it becomes trivial to find neighboring
