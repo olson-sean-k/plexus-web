@@ -42,9 +42,10 @@ vertex_.
 
 Every arc is paired with and connected to an _opposite arc_ with an opposing
 direction. Given an arc from a vertex $A$ to a vertex $B$, that arc will have an
-opposite arc from $B$ to $A$. Such arcs are typically notated $\vec{AB}$ and
-$\vec{BA}$. Together, these arcs form an _edge_, which is not directed. An edge
-and its two arcs are together called a _composite edge_.
+opposite arc from $B$ to $A$. Such arcs are typically notated
+$\overrightarrow{AB}$ and $\overrightarrow{BA}$. Together, these arcs form an
+_edge_, which is not directed. An edge and its two arcs are together called a
+_composite edge_.
 
 Arcs are connected to their neighbors, known as _next_ and _previous arcs_. A
 traversal along a series of arcs is a _path_. A path is _closed_ if it forms a
@@ -238,9 +239,9 @@ that initiates them.
 
 Most mutations return a view over a modified or newly inserted topological
 structure that can be used to further traverse the graph. For example, splitting
-an arc $\vec{AB}$ returns a vertex $M$ that subdivides the composite edge. The
-leading arc of $M$ is $\vec{MB}$ and is a part of the same interior path as the
-initiating arc.
+an arc $\overrightarrow{AB}$ returns a vertex $M$ that subdivides the composite
+edge. The leading arc of $M$ is $\overrightarrow{MB}$ and is a part of the same
+interior path as the initiating arc.
 
 ```rust
 let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
