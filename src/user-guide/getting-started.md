@@ -12,12 +12,14 @@ plexus = "0.0.11" # Unstable. Require exact version.
     failures between releases.
 
 Plexus interacts with other crates in the Rust ecosystem. Most importantly, it
-uses [decorum](https://crates.io/crates/decorum) for constrained and hashable
-floating-point types and various mathematics crates to represent mesh geometry.
-[nalgebra](https://crates.io/crates/nalgebra) is highly recommended for
+uses [`theon`](https://crates.io/crates/theon) to abstract Euclidean geometry
+atop various mathematics crates. It also uses
+[`decorum`](https://crates.io/crates/decorum) for floating-point values that
+support `Hash` and numeric traits.
+[`nalgebra`](https://crates.io/crates/nalgebra) is highly recommended for
 geometric types, but other crates like
-[cgmath](https://crates.io/crates/cgmath) and
-[mint](https://crates.io/crates/mint) are also supported. Consider also taking
+[`cgmath`](https://crates.io/crates/cgmath) and
+[`mint`](https://crates.io/crates/mint) are also supported. Consider also taking
 dependencies on these crates.
 
 ```toml
@@ -25,34 +27,34 @@ dependencies on these crates.
 decorum = "^0.1.1"
 nalgebra = "^0.17.0"
 plexus = "0.0.11" # Unstable. Require exact version.
+theon = "0.0.1" # Unstable. Require exact version.
 ```
 
 ## Cargo Features
 
 Plexus exposes two kinds of [Cargo
 features](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section):
-_geometry features_ and _IO features_.
+_geometry features_ and _encoding features_.
 
 Geometry features integrate with mathematics crates and optionally implement
-[geometric traits](../geometry) for types in those crates. It is highly
-recommended to enable the corresponding geometry feature if a supported crate is
-used for geometric types.
+[geometric traits](../geometry) from `theon` for types in those crates. It is
+highly recommended to enable the corresponding geometry feature if a supported
+crate is used for geometric types.
 
-| Feature             | Default | Crate    | Support  |
-|---------------------|---------|----------|----------|
-| `geometry-cgmath`   | No      | cgmath   | Complete |
-| `geometry-mint`     | No      | mint     | Partial  |
-| `geometry-nalgebra` | Yes     | nalgebra | Complete |
+| Feature             | Default | Crate      | Support  |
+|---------------------|---------|------------|----------|
+| `geometry-cgmath`   | No      | `cgmath`   | Complete |
+| `geometry-mint`     | No      | `mint`     | Partial  |
+| `geometry-nalgebra` | Yes     | `nalgebra` | Complete |
 
-IO features expose sub-modules in the `io` module for mesh formats and encodings
-that can be used to serialize and deserialize mesh data.
-For example, the `io-ply` feature enables the `io::ply`
-module and [PLY](https://en.wikipedia.org/wiki/ply_(file_format)) encoding
-features.
+Encoding features expose sub-modules in the `encoding` module for mesh formats
+that can be used to serialize and deserialize mesh data. For example, the
+`encoding-ply` feature enables the `encoding::ply` module with support for the
+[PLY](https://en.wikipedia.org/wiki/ply_(file_format)) format.
 
-| Feature  | Default | Encoding | Read | Write |
-|----------|---------|----------|------|-------|
-| `io-ply` | No      | PLY      | Yes  | Yes   |
+| Feature        | Default | Encoding | Read | Write |
+|----------------|---------|----------|------|-------|
+| `encoding-ply` | No      | PLY      | Yes  | No    |
 
 To configure features, specify a dependency on Plexus in `Cargo.toml` as seen
 below.
@@ -60,8 +62,8 @@ below.
 ```toml
 [dependencies.plexus]
 features = [
+    "encoding-ply"
     "geometry-nalgebra",
-    "io-ply"
 ]
 version = "0.0.11" # Unstable. Require exact version.
 ```
@@ -82,6 +84,7 @@ re-exports traits used by iterator expressions that process streams of
 topological structures.
 
 ```rust hl_lines="3"
+use decorum::N64;
 use nalgebra::Point3;
 use plexus::index::{Flat3, HashIndexer};
 use plexus::prelude::*;
@@ -89,8 +92,7 @@ use plexus::primitive::cube::Cube;
 
 // These functions are all imported from `prelude` via traits.
 let (indices, vertices) = Cube::new()
-    .polygons_with_position()
-    .map_vertices(|position| -> Point3<f64> { position.into() })
+    .polygons_with_position::<Point3<N64>>()
     .triangulate()
     .index_vertices::<Flat3, _>(HashIndexer::default());
 ```

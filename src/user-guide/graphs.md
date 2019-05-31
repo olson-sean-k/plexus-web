@@ -1,9 +1,8 @@
 Plexus provides a flexible representation of meshes as a [half-edge
 graph](https://en.wikipedia.org/wiki/doubly_connected_edge_list) via the `graph`
 module and `MeshGraph` type. Graphs can store arbitrary geometric data
-associated with any topological structure. Unlike generators, iterator
-expressions, and buffers, graphs provide efficient traversals and complex
-manipulation of meshes.
+associated with any topological structure. Unlike iterator expressions and
+buffers, graphs provide efficient traversals and complex manipulation of meshes.
 
 !!! note
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
@@ -14,7 +13,7 @@ manipulation of meshes.
 
 ```rust
 // Create a graph of a two-dimensional quadrilateral from raw buffers.
-let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
+let mut graph = MeshGraph::<Point2<N64>>::from_raw_buffers(
     vec![Quad::new(0usize, 1, 2, 3)],
     vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)],
 )
@@ -22,8 +21,8 @@ let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
 
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
-    .polygons_with_position()
-    .collect<MeshGraph<Point3<f64>>>();
+    .polygons_with_position::<Point3<N64>>()
+    .collect<MeshGraph<Point3<N64>>>();
 ```
 
 ## Representation
@@ -75,10 +74,10 @@ of a given face.
 is accessed using keys into this storage. Keys are exposed as strongly typed and
 opaque values, which can be used to refer to a topological structure.
 
-## Specifying Geometry
+## Geometry
 
 `MeshGraph` exposes a type parameter that determines the representation of
-geometry in a graph. This type must implement the `Geometry` trait, which
+geometry in a graph. This type must implement the `GraphGeometry` trait, which
 specifies which types are used for geometry in vertices, arcs, edges, and faces.
 
 ```rust
@@ -87,7 +86,7 @@ pub struct Vertex {
     pub normal: Vector3<R64>,
 }
 
-impl Geometry for Vertex {
+impl GraphGeometry for Vertex {
     type Vertex = Self;
     type Arc = ();
     type Edge = ();
@@ -98,15 +97,22 @@ let mut graph = MeshGraph::<Vertex>::new();
 ```
 
 !!! note
-    Most examples on this page use the `Point2` and `Point3` types from the
-    [nalgebra](https://crates.io/crates/nalgebra) crate for graph geometry.
-    These types implement `Geometry` and represent positional data in vertices
-    within the graph.
+    Most examples on this page use the `N64` and `R64` types from the
+    [`decorum`](https://crates.io/crates/decorum) crate and the `Point2` and
+    `Point3` types from the [`nalgebra`](https://crates.io/crates/nalgebra)
+    crate for graph geometry. When the `geometry-nalgebra` feature is enabled,
+    these types implement `GraphGeometry`.
+
+The associated types specified by a `GraphGeometry` implementation determine the
+type of the `geometry` member exposed by [views](../graphs/#topological-views).
+When set to `()`, no geometry is present. `()` implements `GraphGeometry` with
+all associated types set to `()`.
 
 Geometry is vertex-based, meaning that geometric operations depend on vertex
 geometry exposing some notion of positional data via the `AsPosition` trait. If
 geometry does not have this property, then geometric operations will not be
-available. Read more about geometric and spatial traits [here](../geometry).
+available. Read more about geometric traits and spatial operations
+[here](../geometry).
 
 ## Topological Views
 
@@ -130,8 +136,8 @@ to traverse a graph:
 ```rust hl_lines="8 9 10 11 12 13 14 15"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
-    .polygons_with_position()
-    .collect::<MeshGraph<Point3<f64>>>();
+    .polygons_with_position::<Point3<N64>>()
+    .collect::<MeshGraph<Point3<N64>>>();
 
 // Get a view of a face and its opposite face.
 let face = graph.faces().nth(0).expect("cube");
@@ -155,8 +161,8 @@ structures in a graph sometimes emit orphan views.
 ```rust hl_lines="7 8 9"
 // Create a graph with positional data from a UV-sphere.
 let mut graph = UvSphere::new(8, 8)
-    .polygons_with_position()
-    .collect::<MeshGraph<Point3<f64>>>();
+    .polygons_with_position::<Point3<f64>>()
+    .collect_with_indexer::<MeshGraph<Point3<f64>>, _>(LruIndexer::default());
 
 // Scale the position data in all vertices.
 for mut vertex in graph.orphan_vertices() {
@@ -184,9 +190,9 @@ named like accessors. For example, `into_outgoing_arc` is consuming and
 `outgoing_arc` is borrowing.
 
 !!! note
-    For fallible traversals that maintain mutability, the more advanced
-    `with_ref` function can be used. This function either returns a view with
-    the originating mutability or the originating view.
+    For fallible traversals that can restore a consumed view, the more advanced
+    `with_ref` function can be used. This function either returns a new view
+    with the originating mutability or the originating view itself.
 
 Immutable and mutable views are both represented by view types, such as
 `FaceView`. Orphan views are represented by orphan view types, such as
@@ -216,8 +222,8 @@ the target topology and then lookup each mutable view using those keys.
 ```rust hl_lines="7 8 9 10"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
-    .polygons_with_position()
-    .collect::<MeshGraph<Point3<f64>>>();
+    .polygons_with_position::<Point3<N64>>()
+    .collect::<MeshGraph<Point3<N64>>>();
 
 // Collect the keys of the faces in the graph.
 let keys = graph
@@ -251,7 +257,7 @@ let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
 ```
 
 It is possible to downgrade mutable views into immutable views using `into_ref`.
-This can be useful when perfomring topological mutations, as it allows for any
+This can be useful when performing topological mutations, as it allows for any
 number of traversals immediately after the mutation is performed.
 
 ```rust hl_lines="2"
@@ -271,17 +277,20 @@ Graphs also expose aggregate mutations that may operate over any and all
 topological structures.
 
 ```rust hl_lines="8"
+type E3 = Point2<N64>;
+type E3 = Point3<N64>;
+
 let cube = Cube::new();
 let mut graph = primitive::zip_vertices((
-    cube.polygons_with_position(),
-    cube.polygons_with_uv_map(),
+    cube.polygons_with_position::<E3>(),
+    cube.polygons_with_uv_map::<E2>(),
 ))
 .collect::<MeshGraph<Texture>>();
 
 graph.triangulate(); // Triangulates all faces in the graph.
 ```
 
-Topological mutations expose spatial functions for types that implement certain
+Topological mutations expose spatial functions for types that implement
 geometric traits, such as `split_at_midpoint`. Views also expose purely
 topological functions, which can always be used (even if the geometry is
 non-spatial).
@@ -289,7 +298,7 @@ non-spatial).
 ```rust hl_lines="16"
 pub enum Weight {}
 
-impl Geometry for Weight {
+impl GraphGeometry for Weight {
     type Vertex = f64;
     type Arc = ();
     type Edge = ();
@@ -308,3 +317,54 @@ let vertex = graph.arc_mut(key).unwrap().split_with(|| 0.1);
 In the above example, `split_with` accepts a function that returns geometry for
 the subdividing vertex of the split. Similar functions exist for other
 topological mutations as well, such as `poke_with`.
+
+## Generic Programming
+
+The `graph` module provides traits that express the geometric capabilities of a
+[graph](../graphs). These can be used to write generic code that requires
+particular geometric operations, such as computing edge midpoints. This example
+subdivides a face in a mesh by splitting arcs at their midpoints:
+
+```rust
+pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>
+where
+    G: EdgeMidpoint<Midpoint = VertexPosition<G>> + GraphGeometry,
+    G::Vertex: AsPosition,
+{
+    // Split each edge, stashing the vertex key and moving to the next arc.
+    let arity = face.arity();
+    let mut arc = face.into_arc();
+    let mut splits = SmallVec::<[_; 4]>::with_capacity(arity);
+    for _ in 0..arity {
+        let vertex = arc.split_at_midpoint();
+        splits.push(vertex.key());
+        arc = vertex.into_outgoing_arc().into_next_arc();
+    }
+    // Split faces along the vertices from each arc split.
+    let mut face = arc.into_face().unwrap();
+    for (a, b) in splits.into_iter().perimeter() {
+        face = face.split(ByKey(a), ByKey(b)).unwrap().into_face().unwrap();
+    }
+    // Return the terminating face of the decomposition.
+    face
+}
+```
+
+These traits avoid the need to specify very complex type bounds, but it is of
+course possible to express type bounds directly using traits from the
+[`decorum`](https://crates.io/crates/decorum) and
+[`theon`](https://crates.io/crates/theon) crates.
+
+The following example expresses type bounds for a function that computes the
+area of faces in two-dimensional graphs:
+
+```rust
+pub fn area<G>(face: FaceView<&MeshGraph<G>, G>) -> Scalar<VertexPosition<G>>
+where
+    G: GraphGeometry,
+    G::Vertex: AsPosition,
+    VertexPosition<G>: EuclideanSpace + FiniteDimensional<N = U2>,
+{
+    ...
+}
+```
