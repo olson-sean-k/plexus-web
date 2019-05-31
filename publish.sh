@@ -10,4 +10,4 @@ src_hash=`cat "$out_dir"/hash`
 
 cp -r "$repo_dir"/script "$out_dir"
 
-"$out_dir"/script/build.sh
+"$out_dir"/script/publish.sh
