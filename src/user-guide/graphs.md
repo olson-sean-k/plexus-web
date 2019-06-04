@@ -276,7 +276,7 @@ let span = (source, destination);
 Graphs also expose aggregate mutations that may operate over any and all
 topological structures.
 
-```rust hl_lines="8"
+```rust hl_lines="11"
 type E3 = Point2<N64>;
 type E3 = Point3<N64>;
 
@@ -325,7 +325,7 @@ The `graph` module provides traits that express the geometric capabilities of a
 particular geometric operations, such as computing edge midpoints. This example
 subdivides a face in a mesh by splitting arcs at their midpoints:
 
-```rust
+```rust hl_lines="3 4"
 pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>
 where
     G: EdgeMidpoint<Midpoint = VertexPosition<G>> + GraphGeometry,
@@ -358,7 +358,7 @@ course possible to express type bounds directly using traits from the
 The following example expresses type bounds for a function that computes the
 area of faces in two-dimensional graphs:
 
-```rust
+```rust hl_lines="4 5"
 pub fn area<G>(face: FaceView<&MeshGraph<G>, G>) -> Scalar<VertexPosition<G>>
 where
     G: GraphGeometry,

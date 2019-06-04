@@ -83,7 +83,7 @@ The `prelude` module re-exports many commonly used traits. In particular, it
 re-exports traits used by iterator expressions that process streams of
 topological structures.
 
-```rust hl_lines="3"
+```rust hl_lines="4"
 use decorum::N64;
 use nalgebra::Point3;
 use plexus::index::{Flat3, HashIndexer};
