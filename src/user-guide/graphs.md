@@ -105,8 +105,7 @@ let mut graph = MeshGraph::<Vertex>::new();
 
 The associated types specified by a `GraphGeometry` implementation determine the
 type of the `geometry` member exposed by [views](../graphs/#topological-views).
-When set to `()`, no geometry is present. `()` implements `GraphGeometry` with
-all associated types set to `()`.
+When set to `()`, no geometry is present.
 
 Geometry is vertex-based, meaning that geometric operations depend on vertex
 geometry exposing some notion of positional data via the `AsPosition` trait. If
@@ -317,6 +316,55 @@ let vertex = graph.arc_mut(key).unwrap().split_with(|| 0.1);
 In the above example, `split_with` accepts a function that returns geometry for
 the subdividing vertex of the split. Similar functions exist for other
 topological mutations as well, such as `poke_with`.
+
+## Computation vs. Payload
+
+When graph geometry implements geometric traits, views expose methods to compute
+related attributes like normals and centroids.
+
+```rust
+let mut graph = Cube::new()
+    .polygons_with_position::<Point3<N64>>()
+    .collect<MeshGraph<Point3<N64>>>();
+
+// Computes the centroid of the face.
+let centroid = graph.faces().nth(0).unwrap().centroid();
+```
+
+These computations are based on the positional data in vertices. However, it is
+also possible to include these attributes in the geometry (payload) of a graph
+and assign arbitrary values as needed. For example, it is sometimes desirable to
+establish vertex normals independently of surrounding face or edge geometry.
+
+```rust
+pub struct Vertex {
+    pub position: Point3<R64>,
+    pub normal: Vector3<R64>,
+}
+
+impl GraphGeometry for Vertex {
+    type Vertex = Self;
+    type Arc = ();
+    type Edge = ();
+    type Face = ();
+}
+
+let mut graph = Cube::new()
+    .polygons_with_position::<Point3<N64>>()
+    .map_vertices(|position| Vertex {
+        position,
+        normal: Basis::x(),
+    })
+    .collect<MeshGraph<Point3<N64>>>();
+
+// Write arbitrary data to the payload.
+graph.orphan_vertices().nth(0).unwrap().geometry.normal = Basis::z();
+```
+
+The above example uses the `Vertex` type to store a position and normal in each
+vertex. This is distinct from computed attributes, as this normal is arbitrary
+and is not recomputed when it is accessed. Application may choose either
+approach, though computation should be preferred when possible.
 
 ## Generic Programming
 
