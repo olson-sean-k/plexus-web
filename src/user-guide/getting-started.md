@@ -20,7 +20,7 @@ support `Hash` and numeric traits.
 geometric types, but other crates like
 [`cgmath`](https://crates.io/crates/cgmath) and
 [`mint`](https://crates.io/crates/mint) are also supported. Consider also taking
-dependencies on these crates.
+dependencies on these crates as needed.
 
 ```toml
 [dependencies]

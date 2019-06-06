@@ -353,18 +353,19 @@ let mut graph = Cube::new()
     .polygons_with_position::<Point3<N64>>()
     .map_vertices(|position| Vertex {
         position,
-        normal: Basis::x(),
+        normal: Vector3::new(1.0, 0.0, 0.0),
     })
     .collect<MeshGraph<Point3<N64>>>();
 
 // Write arbitrary data to the payload.
-graph.orphan_vertices().nth(0).unwrap().geometry.normal = Basis::z();
+let mut vertex = graph.orphan_vertices().nth(0).unwrap();
+vertex.geometry.normal = Vector3::new(0.0, 0.0, 1.0);
 ```
 
 The above example uses the `Vertex` type to store a position and normal in each
 vertex. This is distinct from computed attributes, as this normal is arbitrary
-and is not recomputed when it is accessed. Application may choose either
-approach, though computation should be preferred when possible.
+and is not recomputed when it is accessed. Applications may choose either
+approach, though computation is typically preferable.
 
 ## Generic Programming
 
