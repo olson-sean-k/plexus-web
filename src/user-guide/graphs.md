@@ -370,9 +370,9 @@ approach, though computation is typically preferable.
 ## Generic Programming
 
 The `graph` module provides traits that express the geometric capabilities of a
-[graph](../graphs). These can be used to write generic code that requires
-particular geometric operations, such as computing edge midpoints. This example
-subdivides a face in a mesh by splitting arcs at their midpoints:
+`MeshGraph`. These can be used to write generic code that requires particular
+geometric operations, such as computing edge midpoints. This example subdivides
+a face in a mesh by splitting arcs at their midpoints:
 
 ```rust hl_lines="3 4"
 pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>

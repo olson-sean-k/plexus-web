@@ -13,14 +13,16 @@ plexus = "0.0.11" # Unstable. Require exact version.
 
 Plexus interacts with other crates in the Rust ecosystem. Most importantly, it
 uses [`theon`](https://crates.io/crates/theon) to abstract Euclidean geometry
-atop various mathematics crates. It also uses
-[`decorum`](https://crates.io/crates/decorum) for floating-point values that
-support `Hash` and numeric traits.
+atop various mathematics crates.
 [`nalgebra`](https://crates.io/crates/nalgebra) is highly recommended for
 geometric types, but other crates like
 [`cgmath`](https://crates.io/crates/cgmath) and
-[`mint`](https://crates.io/crates/mint) are also supported. Consider also taking
-dependencies on these crates as needed.
+[`mint`](https://crates.io/crates/mint) are also supported via `theon`.
+
+The [`decorum`](https://crates.io/crates/decorum) crate is also used in Plexus
+and examples for floating-point values that support `Hash` and numeric traits.
+Consider also taking dependencies on these crates as needed.
+
 
 ```toml
 [dependencies]
@@ -48,9 +50,9 @@ crate is used for geometric types.
 | `geometry-nalgebra` | Yes     | `nalgebra` | Complete |
 
 Encoding features expose sub-modules in the `encoding` module for mesh formats
-that can be used to serialize and deserialize mesh data. For example, the
-`encoding-ply` feature enables the `encoding::ply` module with support for the
-[PLY](https://en.wikipedia.org/wiki/ply_(file_format)) format.
+that can be used to serialize and deserialize polygonal mesh data. For example,
+the `encoding-ply` feature enables the `encoding::ply` module with support for
+the [PLY](https://en.wikipedia.org/wiki/ply_(file_format)) format.
 
 | Feature        | Default | Encoding | Read | Write |
 |----------------|---------|----------|------|-------|
