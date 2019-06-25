@@ -214,7 +214,7 @@ fn recolor<G>(arc: ArcMut<Color>) -> ArcMut<Color> {
     let mut arc = match arc.with_ref(|arc| arc.into_opposite_arc().map(|arc| arc.key())) {
         Either::Left(result) => result.unwrap(),
         Either::Right(arc) => arc,
-    }
+    };
     arc.geometry = Color::red();
     arc
 }
