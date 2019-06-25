@@ -132,11 +132,18 @@ cannot mutate a graph and are not exclusive while mutable views may mutate both
 the geometry and topology of a graph but are exclusive. This example uses a view
 to traverse a graph:
 
-```rust hl_lines="8 9 10 11 12 13 14 15"
-// Create a graph with positional data from a unit cube.
-let mut graph = Cube::new()
-    .polygons_with_position::<Point3<N64>>()
-    .collect::<MeshGraph<Point3<N64>>>();
+```rust hl_lines="16 17 18 19 20 21"
+type E2 = Point2<N64>;
+type E3 = Point3<N64>;
+
+// Create a graph with positional and UV-mapping data from a unit cube.
+let cube = Cube::new();
+let mut graph = primitive::zip_vertices((
+    cube.polygons_with_position::<E3>(),
+    cube.polygons_with_uv_map::<E2>(),
+))
+.map_vertices(|(position, uv)| Vertex::new(position, uv))
+.collect::<MeshGraph<Vertex>>();
 
 // Get a view of a face and its opposite face.
 let face = graph.faces().nth(0).expect("cube");
@@ -169,6 +176,12 @@ for mut vertex in graph.orphan_vertices() {
 }
 ```
 
+Immutable and mutable views are both represented by view types, such as
+`FaceView`. Orphan views are represented by orphan view types, such as
+`OrphanFaceView`.
+
+## Traversals
+
 There are two types of direct traversals exposed by views: _consuming
 traversals_ and _borrowing traversals_. Consuming traversals consume a view and
 emit another view. Borrowing traversals only borrow a view and use that borrow
@@ -188,14 +201,30 @@ Consuming traversals are named like conversions and borrowing traversals are
 named like accessors. For example, `into_outgoing_arc` is consuming and
 `outgoing_arc` is borrowing.
 
-!!! note
-    For fallible traversals that can restore a consumed view, the more advanced
-    `with_ref` function can be used. This function either returns a new view
-    with the originating mutability or the originating view itself.
+Only consuming traversals can emit mutable views and when such a traversal fails
+the originating view is lost. This means that there is no recourse if such a
+traversal fails and code does not have access to the source `MeshGraph`, such as
+a function that only accepts a view. In these cases, a fallible traversal via
+`with_ref` can be useful.
 
-Immutable and mutable views are both represented by view types, such as
-`FaceView`. Orphan views are represented by orphan view types, such as
-`OrphanFaceView`.
+```rust
+type ArcMut<'a, G> = ArcView<&'a mut MeshGraph<G>, G>;
+
+fn recolor<G>(arc: ArcMut<Color>) -> ArcMut<Color> {
+    let mut arc = match arc.with_ref(|arc| arc.into_opposite_arc().map(|arc| arc.key())) {
+        Either::Left(result) => result.unwrap(),
+        Either::Right(arc) => arc,
+    }
+    arc.geometry = Color::red();
+    arc
+}
+```
+
+`with_ref` accepts a function that accepts a borrowed view and optionally
+returns a key. When `None` is returned by this function, the traversal has
+failed and `with_ref` returns the originating view. If a key is returned, then
+`with_ref` attempts to construct a view from the key with the originating
+mutability and returns the result.
 
 ## Iterators and Circulators
 
@@ -276,7 +305,7 @@ Graphs also expose aggregate mutations that may operate over any and all
 topological structures.
 
 ```rust hl_lines="11"
-type E3 = Point2<N64>;
+type E2 = Point2<N64>;
 type E3 = Point3<N64>;
 
 let cube = Cube::new();
@@ -323,9 +352,11 @@ When graph geometry implements geometric traits, views expose methods to compute
 related attributes like normals and centroids.
 
 ```rust
-let mut graph = Cube::new()
-    .polygons_with_position::<Point3<N64>>()
-    .collect<MeshGraph<Point3<N64>>>();
+let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
+    PointEncoding::default(),
+    File::open("teapot.ply").unwrap(),
+)
+.unwrap();
 
 // Computes the centroid of the face.
 let centroid = graph.faces().nth(0).unwrap().centroid();
