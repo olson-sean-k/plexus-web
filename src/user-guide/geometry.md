@@ -16,12 +16,17 @@ these traits are implemented.
 
 ## Conversions
 
-The `geometry` module provides several important conversion traits. Conversions
-enable more ergonomic and flexible APIs. The `FromGeometry` and `IntoGeometry`
-traits are analogous to the standard `From` and `Into` traits and perform a
-similar function, but are used exclusively for geometric types.
+Plexus provides conversions for geometric types to enable more ergonomic and
+flexible APIs. The `FromGeometry` and `IntoGeometry` traits are analogous to the
+standard `From` and `Into` traits and perform a similar function, but are used
+exclusively for geometric types.
 
-The `AsPosition` trait allows vertex data to expose positional data. When this
-positional data implements traits from `theon`, spatial operations become
-available. For example, this allows graphs to support splitting composite edges
-at midpoints, extruding faces, and flattening faces to a best-fit plane.
+Conversions are optionally implemented via [geometry Cargo
+features](../getting-started/#cargo-features) and include support for proxy
+types from the [`decorum`](https://crates.io/crates/decorum) crate.
+
+The `AsPosition` trait is re-exported from `theon` and allows vertex data to
+expose positional data. When this positional data implements geometric traits,
+spatial operations become available. For example, this allows graphs to support
+splitting composite edges at midpoints, extruding faces, and flattening faces to
+a best-fit plane.
