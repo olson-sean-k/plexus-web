@@ -19,9 +19,9 @@ geometric types, but other crates like
 [`cgmath`](https://crates.io/crates/cgmath) and
 [`mint`](https://crates.io/crates/mint) are also supported via `theon`.
 
-The [`decorum`](https://crates.io/crates/decorum) crate is also used in Plexus
-and examples for floating-point values that support `Hash` and numeric traits.
-Consider also taking dependencies on these crates as needed.
+The [`decorum`](https://crates.io/crates/decorum) crate is also supported by
+Plexus and is useful for floating-point values that support `Hash` and various
+numeric traits.  Consider also taking dependencies on these crates as needed.
 
 
 ```toml
@@ -36,7 +36,18 @@ theon = "0.0.1" # Unstable. Require exact version.
 
 Plexus exposes two kinds of [Cargo
 features](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section):
-_geometry features_ and _encoding features_.
+_geometry features_ and _encoding features_. To configure features, specify a
+dependency on Plexus in `Cargo.toml` as seen below.
+
+```toml
+[dependencies.plexus]
+default-features = false
+features = [
+    "encoding-ply"
+    "geometry-nalgebra",
+]
+version = "0.0.11" # Unstable. Require exact version.
+```
 
 Geometry features integrate with mathematics crates and optionally implement
 [geometric traits](../geometry) from `theon` for types in those crates. It is
@@ -58,32 +69,19 @@ the [PLY](https://en.wikipedia.org/wiki/ply_(file_format)) format.
 |----------------|---------|----------|------|-------|
 | `encoding-ply` | No      | PLY      | Yes  | No    |
 
-To configure features, specify a dependency on Plexus in `Cargo.toml` as seen
-below.
-
-```toml
-[dependencies.plexus]
-features = [
-    "encoding-ply"
-    "geometry-nalgebra",
-]
-version = "0.0.11" # Unstable. Require exact version.
-```
-
 ## Prelude Module
 
-Plexus exposes much of its functionality via traits with blanket
-implementations. It can sometimes be cumbersome to import these traits, so it is
-recommended to import the contents of the `prelude` module whenever Plexus is
-used.
+Plexus exposes functionality via traits with blanket implementations. It can
+sometimes be cumbersome to import these traits, so it is recommended to import
+the contents of the `prelude` module whenever Plexus is used.
 
 ```rust
 use plexus::prelude::*;
 ```
 
-The `prelude` module re-exports many commonly used traits. In particular, it
+The `prelude` module re-exports commonly used traits. In particular, it
 re-exports traits used by iterator expressions that process streams of
-topological structures.
+topological and geometric data.
 
 ```rust hl_lines="4"
 use decorum::N64;
@@ -91,10 +89,11 @@ use nalgebra::Point3;
 use plexus::index::{Flat3, HashIndexer};
 use plexus::prelude::*;
 use plexus::primitive::cube::Cube;
+use plexus::primitive::generate::Position;
 
 // These functions are all imported from `prelude` via traits.
 let (indices, vertices) = Cube::new()
-    .polygons_with_position::<Point3<N64>>()
+    .polygons::<Position<Point3<N64>>>()
     .triangulate()
     .index_vertices::<Flat3, _>(HashIndexer::default());
 ```
