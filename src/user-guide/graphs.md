@@ -14,14 +14,14 @@ buffers, graphs provide efficient traversals and complex manipulation of meshes.
 ```rust
 // Create a graph of a two-dimensional quadrilateral from raw buffers.
 let mut graph = MeshGraph::<Point2<N64>>::from_raw_buffers(
-    vec![Quad::new(0usize, 1, 2, 3)],
+    vec![Tetragon::new(0usize, 1, 2, 3)],
     vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)],
 )
 .unwrap();
 
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
-    .polygons_with_position::<Point3<N64>>()
+    .polygons::<Position<Point3<N64>>>()
     .collect<MeshGraph<Point3<N64>>>();
 ```
 
@@ -48,11 +48,11 @@ _composite edge_.
 
 Arcs are connected to their neighbors, known as _next_ and _previous arcs_. A
 traversal along a series of arcs is a _path_. The path formed by traversing from
-an arc to its next arc and so on is an _interior path_. When a face is present
-within an interior path, the arcs will refer to that face and the face will
-refer to exactly one of the arcs in the interior path (its leading arc). An arc
-with no associated face is known as a _boundary arc_. If both of an edge's arcs
-are boundary arcs, then that edge is an _unbounded edge_.
+an arc to its next arc and so on is a _ring_. When a face is present within a
+ring, the arcs will refer to that face and the face will refer to exactly one of
+the arcs in the ring (its leading arc). An arc with no associated face is known
+as a _boundary arc_. If both of an edge's arcs are boundary arcs, then that edge
+is an _unbounded edge_.
 
 A path is _closed_ if it forms a loop and is _open_ if it terminates. A path
 over vertices $A$, $B$, and $C$ is notated $\overrightarrow{\{A, B, C\}}$.
@@ -132,17 +132,16 @@ cannot mutate a graph and are not exclusive while mutable views may mutate both
 the geometry and topology of a graph but are exclusive. This example uses a view
 to traverse a graph:
 
-```rust hl_lines="16 17 18 19 20 21"
-type E2 = Point2<N64>;
+```rust hl_lines="15 16 17 18 19 20"
 type E3 = Point3<N64>;
 
-// Create a graph with positional and UV-mapping data from a unit cube.
+// Create a graph with positional and normal data from a unit cube.
 let cube = Cube::new();
 let mut graph = primitive::zip_vertices((
-    cube.polygons_with_position::<E3>(),
-    cube.polygons_with_uv_map::<E2>(),
+    cube.polygons::<Position<E3>>(),
+    cube.polygons::<Normal<E3>>(),
 ))
-.map_vertices(|(position, uv)| Vertex::new(position, uv))
+.map_vertices(|(position, normal)| Vertex::new(position, normal))
 .collect::<MeshGraph<Vertex>>();
 
 // Get a view of a face and its opposite face.
@@ -167,7 +166,7 @@ structures in a graph sometimes emit orphan views.
 ```rust hl_lines="7 8 9"
 // Create a graph with positional data from a UV-sphere.
 let mut graph = UvSphere::new(8, 8)
-    .polygons_with_position::<Point3<f64>>()
+    .polygons::<Position<Point3<f64>>>()
     .collect_with_indexer::<MeshGraph<Point3<f64>>, _>(LruIndexer::default());
 
 // Scale the position data in all vertices.
@@ -201,30 +200,11 @@ Consuming traversals are named like conversions and borrowing traversals are
 named like accessors. For example, `into_outgoing_arc` is consuming and
 `outgoing_arc` is borrowing.
 
-Only consuming traversals can emit mutable views and when such a traversal fails
-the originating view is lost. This means that there is no recourse if such a
-traversal fails and code does not have access to the source `MeshGraph`, such as
-a function that only accepts a view. In these cases, a fallible traversal via
-`with_ref` can be useful.
-
-```rust
-type ArcMut<'a, G> = ArcView<&'a mut MeshGraph<G>, G>;
-
-fn recolor<G>(arc: ArcMut<Color>) -> ArcMut<Color> {
-    let mut arc = match arc.with_ref(|arc| arc.into_opposite_arc().map(|arc| arc.key())) {
-        Either::Left(result) => result.unwrap(),
-        Either::Right(arc) => arc,
-    };
-    arc.geometry = Color::red();
-    arc
-}
-```
-
-`with_ref` accepts a function that accepts a borrowed view and optionally
-returns a key. When `None` is returned by this function, the traversal has
-failed and `with_ref` returns the originating view. If a key is returned, then
-`with_ref` attempts to construct a view from the key with the originating
-mutability and returns the result.
+!!! note
+    Only consuming traversals can emit mutable views and when such a traversal
+    fails the originating view is lost. The `with_ref` function can be used to
+    perform a fallible traversal that maintains mutability and yields the
+    originating view upon failure.
 
 ## Iterators and Circulators
 
@@ -250,7 +230,7 @@ the target topology and then lookup each mutable view using those keys.
 ```rust hl_lines="7 8 9 10"
 // Create a graph with positional data from a unit cube.
 let mut graph = Cube::new()
-    .polygons_with_position::<Point3<N64>>()
+    .polygons::<Position<Point3<N64>>>()
     .collect::<MeshGraph<Point3<N64>>>();
 
 // Collect the keys of the faces in the graph.
@@ -278,7 +258,7 @@ Most mutations return a view over a modified or newly inserted topological
 structure that can be used to further traverse the graph. For example, splitting
 an arc $\overrightarrow{AB}$ returns a vertex $M$ that subdivides the composite
 edge. The leading arc of $M$ is $\overrightarrow{MB}$ and is a part of the same
-interior path as the initiating arc.
+ring as the initiating arc.
 
 ```rust
 let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
@@ -304,16 +284,15 @@ let span = (source, destination);
 Graphs also expose aggregate mutations that may operate over any and all
 topological structures.
 
-```rust hl_lines="11"
-type E2 = Point2<N64>;
+```rust hl_lines="10"
 type E3 = Point3<N64>;
 
 let cube = Cube::new();
 let mut graph = primitive::zip_vertices((
-    cube.polygons_with_position::<E3>(),
-    cube.polygons_with_uv_map::<E2>(),
+    cube.polygons::<Position<E3>>(),
+    cube.polygons::<Normal<E3>>(),
 ))
-.collect::<MeshGraph<Texture>>();
+.collect::<MeshGraph<Vertex>>();
 
 graph.triangulate(); // Triangulates all faces in the graph.
 ```
@@ -334,7 +313,7 @@ impl GraphGeometry for Weight {
 }
 
 let mut graph = MeshGraph::<Weight>::from_raw_buffers(
-    vec![Triangle::new(0usize, 1, 2)],
+    vec![Trigon::new(0usize, 1, 2)],
     vec![1.0, 2.0, 0.5],
 )
 .expect("triangle");
@@ -381,16 +360,16 @@ impl GraphGeometry for Vertex {
 }
 
 let mut graph = Cube::new()
-    .polygons_with_position::<Point3<N64>>()
+    .polygons::<Position<Point3<N64>>>()
     .map_vertices(|position| Vertex {
         position,
-        normal: Vector3::new(1.0, 0.0, 0.0),
+        normal: Unit::x(),
     })
-    .collect<MeshGraph<Point3<N64>>>();
+    .collect<MeshGraph<Vertex>>();
 
 // Write arbitrary data to the payload.
 let mut vertex = graph.orphan_vertices().nth(0).unwrap();
-vertex.geometry.normal = Vector3::new(0.0, 0.0, 1.0);
+vertex.geometry.normal = Unit::z();
 ```
 
 The above example uses the `Vertex` type to store a position and normal in each
@@ -430,8 +409,8 @@ where
 }
 ```
 
-These traits avoid the need to specify very complex type bounds, but it is of
-course possible to express type bounds directly using traits from the
+These traits avoid the need to specify very complex type bounds, but it is also
+possible to express type bounds directly using traits from the
 [`decorum`](https://crates.io/crates/decorum) and
 [`theon`](https://crates.io/crates/theon) crates.
 
