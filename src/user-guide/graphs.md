@@ -332,7 +332,7 @@ related attributes like normals and centroids.
 
 ```rust
 let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
-    PointEncoding::default(),
+    PositionEncoding::default(),
     File::open("teapot.ply").unwrap(),
 )
 .unwrap();
