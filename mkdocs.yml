@@ -26,10 +26,10 @@ theme:
   name: material
   custom_dir: src/theme/
   language: en
-  logo: img/plexus.svg
+  logo: img/plexus-mono.svg
   palette:
-    primary: purple
-    accent: amber
+    primary: pink
+    accent: light blue
   feature:
     tabs: true
 

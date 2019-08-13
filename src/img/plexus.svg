@@ -1,70 +1,42 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   id="svg8"
-   version="1.1"
-   viewBox="0 0 201.08333 201.08333"
-   height="760"
-   width="760">
-  <title
-     id="title4873">Plexus</title>
-  <defs
-     id="defs2">
-    <linearGradient
-       osb:paint="solid"
-       id="linearGradient6360">
-      <stop
-         id="stop6358"
-         offset="0"
-         style="stop-color:#ffd34b;stop-opacity:1;" />
-    </linearGradient>
-  </defs>
-  <metadata
-     id="metadata5">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>Plexus</dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     transform="translate(0,-95.916672)"
-     id="layer1">
-    <path
-       id="path4606"
-       d="M 47.624999,143.54167 V 252.02084 L 153.45833,196.45834 Z"
-       style="fill:none;stroke:#ffd34b;stroke-width:30;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
-    <g
-       id="flowRoot4865"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:170.66667175px;line-height:1.25;font-family:'Source Code Pro';-inkscape-font-specification:'Source Code Pro, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#9a0089;fill-opacity:1;stroke:none"
-       transform="matrix(0.68982218,0,0,0.68982218,-345.56157,98.089205)"
-       aria-label="PLEXUS" />
-    <circle
-       r="34.395832"
-       cy="143.54167"
-       cx="47.625"
-       id="path4574"
-       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-    <circle
-       r="34.395832"
-       cy="249.375"
-       cx="47.625"
-       id="path4574-3"
-       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-    <circle
-       r="34.395832"
-       cy="196.45833"
-       cx="153.45834"
-       id="path4574-3-6"
-       style="fill:#ffd34b;fill-opacity:1;stroke:#ffffff;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg width="512" height="512" version="1.1" viewBox="0 0 135.467 135.467" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="backdrop">
+   <stop stop-color="#a03282" stop-opacity=".990698" offset="0"/>
+   <stop stop-color="#f05a6e" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient1121">
+   <stop stop-color="#a03282" stop-opacity=".990698" offset="0"/>
+   <stop stop-color="#cd5a6e" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient1149" x1="67.601" x2="135.599" y1="246.159" y2="246.159" gradientTransform="translate(0 2.09757e-6)" gradientUnits="userSpaceOnUse" xlink:href="#backdrop"/>
+  <linearGradient id="linearGradient1157" x2="67.7333" y1="246.2" y2="246.2" gradientUnits="userSpaceOnUse" xlink:href="#backdrop"/>
+  <linearGradient id="linearGradient1177" x2="135.467" y1="195.4" y2="195.4" gradientUnits="userSpaceOnUse" xlink:href="#backdrop"/>
+  <linearGradient id="linearGradient1185" x1="67.7333" x2="135.467" y1="246.2" y2="246.2" gradientTransform="translate(0 2.09757e-6)" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient1121"/>
+  <linearGradient id="linearGradient1193" x2="67.7333" y1="246.2" y2="246.2" gradientUnits="userSpaceOnUse" xlink:href="#linearGradient1121"/>
+  <linearGradient id="linearGradient868" x1="-.1325" x2="135.599" y1="195.408" y2="195.408" gradientUnits="userSpaceOnUse" xlink:href="#backdrop"/>
+  <clipPath id="clipPath875">
+   <path d="m71.9667 269.483 46.5667-23.2833v-42.3333l-50.8-25.4-50.8 25.4v44.45h-8.46667v-48.6833l59.2667-29.6333 59.2667 29.6333v50.8l-50.8 25.4z" fill="#000000"/>
+   <path d="m67.7656 267.35c-4.64866 0-8.4668 3.81618-8.4668 8.46484s3.81814 8.4668 8.4668 8.4668 8.4668-3.81814 8.4668-8.4668-3.81814-8.46484-8.4668-8.46484zm0 4.61719c2.15281 0 3.84766 1.69484 3.84766 3.84765s-1.69485 3.84961-3.84766 3.84961-3.84766-1.6968-3.84766-3.84961 1.69485-3.84765 3.84766-3.84765z" color="#000000" color-rendering="auto" dominant-baseline="auto" fill="#000000" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;isolation:auto;mix-blend-mode:normal;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal"/>
+   <path d="m12.6992 246.199c-4.64866 0-8.4668 3.81814-8.4668 8.4668s3.81814 8.46679 8.4668 8.46679c4.64866 0 8.4668-3.81813 8.4668-8.46679s-3.81814-8.4668-8.4668-8.4668zm0 4.61914c2.15281 0 3.84961 1.69485 3.84961 3.84766s-1.6968 3.84961-3.84961 3.8496c-2.15281 0-3.84766-1.69679-3.84766-3.8496s1.69485-3.84766 3.84766-3.84766z" color="#000000" color-rendering="auto" dominant-baseline="auto" fill="#000000" image-rendering="auto" shape-rendering="auto" solid-color="#000000" style="font-feature-settings:normal;font-variant-alternates:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;font-variant-position:normal;isolation:auto;mix-blend-mode:normal;shape-padding:0;text-decoration-color:#000000;text-decoration-line:none;text-decoration-style:solid;text-indent:0;text-orientation:mixed;text-transform:none;white-space:normal"/>
+   <path d="m50.8 297-25.4-12.7v-76.2l42.3333-21.1667 42.3333 21.1667v33.8667l-42.3333 21.1667v-25.4l16.9333-8.46666v-8.46667l-16.9333-8.46667-16.9333 8.46667z" fill="#000000"/>
+  </clipPath>
+ </defs>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g transform="translate(0 -161.533)">
+  <g clip-path="url(#clipPath875)" stroke-width=".264583">
+   <path d="m67.7333 229.267-67.7333-33.8667v101.6h67.7333z" fill="url(#linearGradient1157)" stroke="url(#linearGradient1193)"/>
+   <path d="m135.467 195.4-67.7333 33.8667v38.1a8.46667 8.46667 0 0 0-8.46667 8.46667 8.46667 8.46667 0 0 0 8.46667 8.46667v12.7h67.7333z" fill="url(#linearGradient1149)" stroke="url(#linearGradient1185)"/>
+   <path d="m67.7333 229.267 67.7333-33.8667v-33.8667h-135.467v33.8667z" fill="url(#linearGradient868)" stroke="url(#linearGradient1177)"/>
   </g>
+ </g>
 </svg>
