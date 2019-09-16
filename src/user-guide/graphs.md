@@ -170,23 +170,32 @@ let mut graph = UvSphere::new(8, 8)
     .collect_with_indexer::<MeshGraph<Point3<f64>>, _>(LruIndexer::default());
 
 // Scale the position data in all vertices.
-for mut vertex in graph.orphan_vertices() {
+for mut vertex in graph.vertex_orphans() {
     vertex.geometry *= 2.0;
 }
 ```
 
 Immutable and mutable views are both represented by view types, such as
 `FaceView`. Orphan views are represented by orphan view types, such as
-`OrphanFaceView`.
+`FaceOrphan`.
 
 ## Traversals
 
-There are two types of direct traversals exposed by views: _consuming
-traversals_ and _borrowing traversals_. Consuming traversals consume a view and
-emit another view. Borrowing traversals only borrow a view and use that borrow
-to construct another view. Borrowing traversals only expose immutable views with
-a limited lifetime while consuming traversals expose views with the same
-lifetime and mutability.
+Topological views can be used to traverse a graph. Traversals are an important
+feature of graphs that are not supported by iterator expressions or buffers.
+Most traversals involve some notion of adjacency, but `MeshGraph` also provides
+categorical traversals.
+
+### Conversions and Accessors
+
+Conversions and accessors provide one-to-one traversals from one topological
+structure to another. Conversions consume a view (via `self`) and emit another
+view. Accessors borrow a view (via `&self`) and use that borrow to produce
+another view. Accessors only expose immutable views with a limited lifetime
+while conversions expose views with the same lifetime and mutability. It is
+**not** possible to perform a [topological
+mutation](../graphs/#topological-mutations) using a view obtained via a
+borrowing traversal (accessor).
 
 ```rust
 // Get a mutable view of a vertex in a graph.
@@ -196,22 +205,21 @@ let arc = vertex.into_outgoing_arc(); // Consumes `vertex`. `arc` is mutable.
 let opposite = arc.opposite_arc(); // Borrows `arc`. `opposite` is immutable.
 ```
 
-Consuming traversals are named like conversions and borrowing traversals are
-named like accessors. For example, `into_outgoing_arc` is consuming and
-`outgoing_arc` is borrowing.
+Conversions and accessors are distinguished using standard Rust naming
+conventions. For example, `into_outgoing_arc` is consuming and `outgoing_arc` is
+borrowing; both traverse from a vertex to its outgoing arc.
 
 !!! note
-    Only consuming traversals can emit mutable views and when such a traversal
-    fails the originating view is lost. The `with_ref` function can be used to
-    perform a fallible traversal that maintains mutability and yields the
-    originating view upon failure.
+    Only consuming traversals preserve mutability. The `with_ref` function can
+    be used with a mutable view to perform a fallible traversal that maintains
+    mutability and restores the originating view if the traversal fails.
 
-## Iterators and Circulators
+### Circulators and Iterators
 
-Topological views allow for traversal of a graph's topology. One useful type of
-traversal uses a _circulator_, which is a type of iterator that examines the
-neighbors of a topological structure. For example, the face circulator of a
-vertex yields all faces that share that vertex in order.
+A _circulator_ is a type of iterator that provides a one-to-many traversal that
+examines all of the immediate neighbors of a topological structure. For example,
+the face circulator of a vertex yields all faces that share that vertex in
+order.
 
 ```rust
 for face in vertex.neighboring_faces() {
@@ -221,11 +229,58 @@ for face in vertex.neighboring_faces() {
 }
 ```
 
+Circulators generally begin iteration from a [leading
+arc](../graphs/#representation) and then traverse topology in a deterministic
+order from that arc. Because mutability requires orphan views, only the geometry
+of immediate neighbors can be mutated using circulators.
+
+```rust
+for mut face in vertex.neighboring_face_orphans() {
+    face.geometry = Color4::white();
+}
+```
+
+_Search traversals_ visit all connected topological structures with some notion
+of adjacency. Both vertices and faces can be traversed in this way to perform
+searches using breadth- and depth-first ordering.
+
+```rust
+if let Some(vertex) = vertex
+    .traverse_by_depth()
+    .find(|vertex| vertex.geometry == target)
+{
+    // ...
+}
+```
+
+It is possible for both vertices and faces to be _disjoint_, meaning that they
+do not share a path with all other vertices or faces. Therefore, these
+traversals are exhaustive with respect to the topologically connected group with
+which the initiating view is associated; they do not necessarily visit every
+vertex or face that is a part of a particular graph.
+
 `MeshGraph`s also directly expose topological structures via iterators, but
-without a deterministic ordering. Mutable iterators (including circulators) emit
-orphan views, because mutable views require exclusive access. To mutate topology
-using multiple mutable views, use an immutable circulator to collect the keys of
-the target topology and then lookup each mutable view using those keys.
+without a deterministic ordering. These categorical iterators are always
+exhaustive, and visit all topological structures in a graph regardless of their
+connectivity.
+
+```rust
+let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
+    PositionEncoding::default(),
+    File::open("flower.ply").unwrap(),
+)
+.unwrap();
+
+// Modify the geometry of every vertex.
+for mut vertex in graph.vertex_orphans() {
+    vertex.geometry *= 2.0;
+}
+```
+
+Mutable iterators (including circulators) emit orphan views, because mutable
+views require exclusive access. To mutate topology using multiple mutable views,
+use an immutable circulator to collect the keys of the target topology and then
+lookup each mutable view using those keys.
 
 ```rust hl_lines="7 8 9 10"
 // Create a graph with positional data from a unit cube.
@@ -244,9 +299,6 @@ for key in keys {
     let _ = graph.face_mut(key).expect("independent").poke_with_offset(0.5);
 }
 ```
-
-Circulators generally begin iteration from a leading arc and then traverse
-topology in a deterministic order from that arc.
 
 ## Topological Mutations
 
@@ -368,7 +420,7 @@ let mut graph = Cube::new()
     .collect<MeshGraph<Vertex>>();
 
 // Write arbitrary data to the payload.
-let mut vertex = graph.orphan_vertices().nth(0).unwrap();
+let mut vertex = graph.vertex_orphans().nth(0).unwrap();
 vertex.geometry.normal = Unit::z();
 ```
 
