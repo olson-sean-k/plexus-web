@@ -253,11 +253,11 @@ if let Some(vertex) = vertex
 }
 ```
 
-It is possible for both vertices and faces to be _disjoint_, meaning that they
-do not share a path with all other vertices or faces. Therefore, these
-traversals are exhaustive with respect to the topologically connected group with
-which the initiating view is associated; they do not necessarily visit every
-vertex or face that is a part of a particular graph.
+It is possible for vertices and faces to be _disjoint_, meaning that they do not
+share a path with all other vertices or faces. Therefore, these traversals are
+only exhaustive with respect to the topologically connected group with which the
+initiating view is associated; they do not necessarily visit every vertex or
+face that is a member of a particular graph.
 
 `MeshGraph`s also directly expose topological structures via iterators, but
 without a deterministic ordering. These categorical iterators are always
@@ -439,7 +439,7 @@ a face in a mesh by splitting arcs at their midpoints:
 ```rust hl_lines="3 4"
 pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>
 where
-    G: EdgeMidpoint<Midpoint = VertexPosition<G>> + GraphGeometry,
+    G: EdgeMidpoint + GraphGeometry,
     G::Vertex: AsPosition,
 {
     // Split each edge, stashing the vertex key and moving to the next arc.
