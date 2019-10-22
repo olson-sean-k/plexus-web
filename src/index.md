@@ -1,4 +1,6 @@
-![Plexus](img/plexus.svg)
+<div align="center">
+    <img alt="Plexus" src="img/plexus.svg" width="320"/>
+</div>
 
 **Plexus** is a [Rust library](https://crates.io/crates/plexus) for polygonal
 mesh processing. It provides primitives, generators, buffers, and graphs that
