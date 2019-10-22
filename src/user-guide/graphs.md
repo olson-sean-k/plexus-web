@@ -51,11 +51,13 @@ traversal along a series of arcs is a _path_. The path formed by traversing from
 an arc to its next arc and so on is a _ring_. When a face is present within a
 ring, the arcs will refer to that face and the face will refer to exactly one of
 the arcs in the ring (its leading arc). An arc with no associated face is known
-as a _boundary arc_. If both of an edge's arcs are boundary arcs, then that edge
-is an _unbounded edge_.
+as a _boundary arc_. If either of an edge's arcs is a boundary arc, then that
+edge is a _boundary edge_.
 
 A path is _closed_ if it forms a loop and is _open_ if it terminates. A path
-over vertices $A$, $B$, and $C$ is notated $\overrightarrow{\{A, B, C\}}$.
+over vertices $A$, $B$, and $C$ is notated $\overrightarrow{\{A,B,C\}}$. This
+path notation is used to describe rings and faces. It may also be used to
+describe arcs, but arcs more often use the shorthand notation shown above.
 
 Together with vertices and faces, the connectivity of arcs allows for efficient
 traversals of topology. For example, it becomes trivial to find neighboring
@@ -63,12 +65,13 @@ topologies, such as the faces that share a given vertex or the neighboring faces
 of a given face.
 
 !!! warning
-    The `MeshGraph` data structure has some limitations. Only
-    [orientable](https://en.wikipedia.org/wiki/orientability) compact
+    The `MeshGraph` data structure has some limitations. With few exceptions,
+    only [orientable](https://en.wikipedia.org/wiki/orientability) compact
     [manifolds](https://en.wikipedia.org/wiki/surface_(topology)) can be
     represented. Unorientable manifolds such as [Möbius
     strips](https://en.wikipedia.org/wiki/m%C3%B6bius_strip) and non-manifold
-    structures such as edge fans cannot be modeled using `MeshGraph`.
+    structures such as singularities and edge-fans cannot be modeled using
+    `MeshGraph`.
 
 `MeshGraph`s store topological data using associative collections and mesh data
 is accessed using keys into this storage. Keys are exposed as strongly typed and
@@ -333,8 +336,7 @@ let destination = vertex.into_outgoing_arc().into_destination_vertex();
 let span = (source, destination);
 ```
 
-Graphs also expose aggregate mutations that may operate over any and all
-topological structures.
+Graphs also provide topological mutations that may operate over an entire graph.
 
 ```rust hl_lines="10"
 type E3 = Point3<N64>;
@@ -347,6 +349,37 @@ let mut graph = primitive::zip_vertices((
 .collect::<MeshGraph<Vertex>>();
 
 graph.triangulate(); // Triangulates all faces in the graph.
+```
+
+Graphs may contain _disjoint sub-graphs_, which are topological groups that
+cannot reach each other. It is possible to split a graph into sub-graphs.
+
+```rust
+// Create a graph of two squares sharing a single edge.
+let mut graph = MeshGraph::<Point2<f64>>::from_raw_buffers(
+    vec![Tetragon::new(0usize, 1, 2, 3), Tetragon::new(0, 3, 4, 5)],
+    vec![
+        (0.0, 0.0),
+        (1.0, 0.0),
+        (1.0, 1.0),
+        (0.0, 1.0),
+        (-1.0, 1.0),
+        (-1.0, 0.0),
+    ],
+)
+.unwrap();
+
+// Find the shared edge and a get a path along one of its arcs.
+let key = graph
+    .edges()
+    .find(|edge| !edge.is_boundary_edge())
+    .map(|edge| edge.key())
+    .unwrap();
+let path = graph.edge_mut(key).unwrap().into_arc().into_path();
+
+// Split the graph into two disjoint sub-graphs.
+let _ = MeshGraph::split_at_path(path).unwrap();
+let graphs = graph.into_disjoint_subgraphs();
 ```
 
 Topological mutations expose spatial functions for types that implement
@@ -390,7 +423,7 @@ let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
 .unwrap();
 
 // Computes the centroid of the face.
-let centroid = graph.faces().nth(0).unwrap().centroid();
+let centroid = graph.faces().nth(0).unwrap().centroid().unwrap();
 ```
 
 These computations are based on the positional data in vertices. However, it is
