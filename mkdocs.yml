@@ -32,7 +32,7 @@ theme:
     tabs: true
   name: material
   language: en
-  logo: img/plexus-mono.svg
+  logo: img/plexus-minimal.svg
   palette:
     primary: pink
     accent: light blue
