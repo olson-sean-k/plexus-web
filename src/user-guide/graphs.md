@@ -189,16 +189,13 @@ feature of graphs that are not supported by iterator expressions or buffers.
 Most traversals involve some notion of adjacency, but `MeshGraph` also provides
 categorical traversals.
 
-### Conversions and Accessors
+### One-to-One
 
 Conversions and accessors provide one-to-one traversals from one topological
-structure to another. Conversions consume a view (via `self`) and emit another
-view. Accessors borrow a view (via `&self`) and use that borrow to produce
-another view. Accessors only expose immutable views with a limited lifetime
-while conversions expose views with the same lifetime and mutability. It is
-**not** possible to perform a [topological
-mutation](../graphs/#topological-mutations) using a view obtained via a
-borrowing traversal (accessor).
+structure to another. Conversions consume a view and emit another view while
+accessors borrow a view and use that borrow to produce another view. Accessors
+only expose immutable views with a limited lifetime while conversions expose
+views with the same lifetime and mutability as the source view.
 
 ```rust
 // Get a mutable view of a vertex in a graph.
@@ -213,11 +210,12 @@ conventions. For example, `into_outgoing_arc` is consuming and `outgoing_arc` is
 borrowing; both traverse from a vertex to its outgoing arc.
 
 !!! note
-    Only consuming traversals preserve mutability. The `with_ref` function can
-    be used with a mutable view to perform a fallible traversal that maintains
-    mutability and restores the originating view if the traversal fails.
+    It is not possible to perform [topological
+    mutations](../graphs/#topological-mutations) using a view obtained via a
+    borrowing traversal, because these views are always
+    [immutable](../graphs/#topological-views).
 
-### Circulators and Iterators
+### One-to-Many
 
 A _circulator_ is a type of iterator that provides a one-to-many traversal that
 examines all of the immediate neighbors of a topological structure. For example,
@@ -256,11 +254,12 @@ if let Some(vertex) = vertex
 }
 ```
 
-It is possible for vertices and faces to be _disjoint_, meaning that they do not
-share a path with all other vertices or faces. Therefore, these traversals are
-only exhaustive with respect to the topologically connected group with which the
-initiating view is associated; they do not necessarily visit every vertex or
-face that is a member of a particular graph.
+!!! warning
+    It is possible for vertices and faces to be _disjoint_, meaning that they do
+    not share a path with all other vertices or faces. Therefore, these
+    traversals are only exhaustive with respect to the topologically connected
+    group with which the initiating view is associated; they do not necessarily
+    visit every vertex or face that is a member of a particular graph.
 
 `MeshGraph`s also directly expose topological structures via iterators, but
 without a deterministic ordering. These categorical iterators are always
@@ -302,6 +301,45 @@ for key in keys {
     let _ = graph.face_mut(key).expect("independent").poke_with_offset(0.5);
 }
 ```
+
+### Rekeying
+
+Topological views pair a key with a reference to the underlying storage of a
+graph. Given a view, it is possible to _rekey_ the view to construct a new view
+using the same underlying storage. It is even possible to rekey between
+different topological structures, such as rekeying a `FaceView` into a
+`VertexView`.
+
+Rekeying is useful for fallible traversals that maintain mutability. A mutable
+view can be used to look up a key and, if such a key is found, be rekeyed into
+that topology. This avoids performing the same traversal more than once in order
+to query and then convert.
+
+```rust
+let face = graph.face_mut(key).unwrap();
+// Find a face along a boundary. If no such face is found, continue to use the
+// initiating face.
+let mut face = {
+    let key = face
+        .traverse_by_depth()
+        .find(|face| {
+            face.interior_arcs()
+                .map(|arc| arc.into_opposite_arc())
+                .any(|arc| arc.is_boundary_arc())
+        })
+        .map(|face| face.key());
+    if let Some(key) = key {
+        face.rekey(key).unwrap() // Rekey into the boundary face.
+    }
+    else {
+        face // Use the initiating face.
+    }
+};
+```
+
+Rekeying can also be useful for code that only operates on topological views and
+does not have access to the associated `MeshGraph`, because it allows arbitrary
+access to the graph's structure.
 
 ## Topological Mutations
 
@@ -423,7 +461,7 @@ let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
 .unwrap();
 
 // Computes the centroid of the face.
-let centroid = graph.faces().nth(0).unwrap().centroid().unwrap();
+let centroid = graph.faces().nth(0).unwrap().centroid();
 ```
 
 These computations are based on the positional data in vertices. However, it is
@@ -509,6 +547,6 @@ where
     G::Vertex: AsPosition,
     VertexPosition<G>: EuclideanSpace + FiniteDimensional<N = U2>,
 {
-    ...
+    // ...
 }
 ```
