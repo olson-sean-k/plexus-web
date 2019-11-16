@@ -26,15 +26,16 @@ nav:
     - plexus: rustdoc/plexus/index.html
 
 theme:
-  name: material
   custom_dir: src/theme/
+  favicon: img/favicon.ico
+  feature:
+    tabs: true
+  name: material
   language: en
   logo: img/plexus-mono.svg
   palette:
     primary: pink
     accent: light blue
-  feature:
-    tabs: true
 
 markdown_extensions:
   - admonition
@@ -47,13 +48,13 @@ markdown_extensions:
 extra:
   # TODO: Enable when the site is ready.
   # disqus: 'plexus-rs'
+  search:
+    language: en
   social:
     - type: github
       link: https://github.com/olson-sean-k
     - type: twitter
       link: https://twitter.com/olsonseank
-  search:
-    language: en
 
 extra_javascript:
   - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
