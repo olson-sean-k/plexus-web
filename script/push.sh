@@ -14,7 +14,9 @@ src_hash=`cat "$out_dir"/hash`
 
 cd "$repo_dir"
 
-which git > /dev/null
+if ! hash git 2>/dev/null; then
+    exit 1
+fi
 
 git checkout gh-pages
 

@@ -7,6 +7,7 @@ repo_dir=`pwd`
 
 out_dir="$repo_dir"/out
 
-cp -r "$repo_dir"/script "$out_dir"
+mkdir -p "$out_dir"/script
+cp -a "$repo_dir"/script "$out_dir"
 
 "$out_dir"/script/build.sh

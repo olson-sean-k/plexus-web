@@ -1,7 +1,8 @@
 #! /usr/bin/env bash
 
-# Ensure the master branch is clean, perform a build, and copy the output to the
-# gh-pages branch.
+# Ensure the master branch is clean and perform a build. Checkout the gh-pages
+# branch, remove all files, and then copy the output of the build into the
+# branch.
 
 set -e
 
@@ -13,7 +14,9 @@ out_dir="$repo_dir"/out
 
 cd "$repo_dir"
 
-which git > /dev/null
+if ! hash git 2>/dev/null; then
+    exit 1
+fi
 
 git checkout master
 
@@ -30,4 +33,6 @@ fi
 "$script_dir"/build.sh
 
 git checkout gh-pages
+git rm -rf .
+git checkout HEAD -- .gitignore
 cp -r "$out_dir"/doc/* "$repo_dir"/.
