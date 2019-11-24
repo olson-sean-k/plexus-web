@@ -26,15 +26,14 @@ git checkout "$branch"
 mkdir -p "$out_dir"
 git rev-parse --short HEAD >"$out_dir"/hash
 
-peru sync 2>&1 | tee "$out_dir"/peru.log
+peru sync
 
-mkdocs build 2>&1 | tee "$out_dir"/mkdocs.log
+mkdocs build
 
 "$out_dir"/lib/rustdoc.sh \
     -p theon \
     --all-features \
-    --manifest-path="$out_dir"/lib/Cargo.toml \
-    2>&1 | tee "$out_dir"/rustdoc.log
+    --manifest-path="$out_dir"/lib/Cargo.toml
 rm -rf "$mkdocs_out_dir"/rustdoc
 cp -r "$rustdoc_out_dir" "$mkdocs_out_dir"/rustdoc
 
