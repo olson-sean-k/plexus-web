@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-# Ensure the master branch is clean and perform a build. Checkout the gh-pages
+# Ensure the source branch is clean and perform a build. Checkout the gh-pages
 # branch, remove all files, and then copy the output of the build into the
 # branch.
 
@@ -12,13 +12,18 @@ script_dir=`pwd`
 repo_dir="$script_dir"/../..
 out_dir="$repo_dir"/out
 
+"$script_dir"/configure.sh "$@"
+
+branch="${1:?branch}"
+shift
+
 cd "$repo_dir"
 
 if ! hash git 2>/dev/null; then
     exit 1
 fi
 
-git checkout master
+git checkout "$branch"
 
 if [ -n "$(git status --porcelain)" ] ; then
     git status
@@ -30,7 +35,7 @@ if [ "$(git rev-parse @)" != "$(git rev-parse @{u})" ] ; then
     exit 1
 fi
 
-"$script_dir"/build.sh
+"$script_dir"/build.sh "$branch" "$@"
 
 git checkout gh-pages
 git rm -rf .

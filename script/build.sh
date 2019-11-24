@@ -14,19 +14,14 @@ out_dir="$repo_dir"/out
 mkdocs_out_dir="$out_dir"/doc
 rustdoc_out_dir="$out_dir"/lib/target/doc
 
+"$script_dir"/configure.sh "$@"
+
+branch="${1:?branch}"
+shift
+
 cd "$repo_dir"
 
-if ! hash cargo 2>/dev/null; then
-    exit 1
-fi
-if ! hash git 2>/dev/null; then
-    exit 1
-fi
-if ! hash peru 2>/dev/null; then
-    exit 1
-fi
-
-git checkout master
+git checkout "$branch"
 
 mkdir -p "$out_dir"
 git rev-parse --short HEAD >"$out_dir"/hash
