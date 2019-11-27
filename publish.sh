@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+# Builds and publishes changes to the `gh-pages` branch of the `origin` remote.
+
 set -e
 
 cd $(dirname "$BASH_SOURCE")

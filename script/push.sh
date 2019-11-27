@@ -1,7 +1,10 @@
 #! /usr/bin/env bash
 
-# Forces a push to the gh-pages branch on the origin remote. Checks out the
-# source branch when done.
+# This is an intermediate script and is not meant to be executed independently.
+# Use caution if executing this script directly.
+
+# This script forces a push to the `gh-pages` branch on the `origin` remote.
+# When complete, the source branch is checked out.
 
 set -e
 
@@ -18,10 +21,6 @@ branch="${1:?branch}"
 shift
 
 cd "$repo_dir"
-
-if ! hash git 2>/dev/null; then
-    exit 1
-fi
 
 git checkout gh-pages
 

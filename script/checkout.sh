@@ -1,8 +1,17 @@
 #! /usr/bin/env bash
 
-# Ensure the source branch is clean and perform a build. Checkout the gh-pages
-# branch, remove all files, and then copy the output of the build into the
-# branch.
+# This script performs a build (see `build.sh`) and then copies the output onto
+# the `gh-pages` branch. This produces a working directory on `gh-pages` using
+# the following steps:
+#
+#   - Check out the `gh-pages` branch.
+#   - Remove all files from the working directory.
+#   - Restore any and all files that are meant to be preserved and managed on
+#     the `gh-pages` branch, such as `.gitignore`.
+#   - Copy the output of the build into the working directory.
+#
+# These steps produce a working directory with any and all changes from the
+# build that can be easily committed. See `commit.sh` and `publish.sh`.
 
 set -e
 
@@ -18,10 +27,6 @@ branch="${1:?branch}"
 shift
 
 cd "$repo_dir"
-
-if ! hash git 2>/dev/null; then
-    exit 1
-fi
 
 git checkout "$branch"
 

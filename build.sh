@@ -1,5 +1,7 @@
 #! /usr/bin/env bash
 
+# Builds the documentation.
+
 set -e
 
 cd $(dirname "$BASH_SOURCE")

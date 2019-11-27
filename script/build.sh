@@ -1,7 +1,17 @@
 #! /usr/bin/env bash
 
-# Fetch and build the API documentation via `rustdoc` and the website
-# documentation via `mkdocs` and write the outputs to the `out` directory.
+# This script builds the website in the following steps:
+#
+#   - Fetch the code for Plexus via `peru`. See `peru.yaml`.
+#   - Build the website documentation via `mkdocs`.
+#   - Build the API documention via `rustdoc`.
+#   - Copy the `CNAME` configuration into the build output.
+#
+# Output of the build is written to the `out` directory. The `out/doc` directory
+# is the primary output and is normally what gets copied to the root of the
+# `gh-pages` branch.
+#
+# Along with `publish.sh`, this is one of the primary top-level scripts.
 
 set -e
 
