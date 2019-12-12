@@ -11,8 +11,6 @@ repo_dir="$script_dir"/../..
 src_dir="$repo_dir"/src
 out_dir="$repo_dir"/out
 
-"$script_dir"/configure.sh "$@"
-
 branch="${1:?branch}"
 shift
 

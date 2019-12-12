@@ -24,6 +24,7 @@ nav:
     - Graphs: user-guide/graphs.md
   - API Documentation:
     - plexus: rustdoc/plexus/index.html
+    - theon: rustdoc/theon/index.html
 
 theme:
   custom_dir: src/theme/
