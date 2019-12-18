@@ -1,1 +1,1 @@
-<iframe src="../rustdoc/plexus/index.html"></iframe>
+<iframe src="../../rustdoc/plexus/index.html"></iframe>

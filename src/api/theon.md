@@ -1,1 +1,1 @@
-<iframe src="../rustdoc/theon/index.html"></iframe>
+<iframe src="../../rustdoc/theon/index.html"></iframe>
