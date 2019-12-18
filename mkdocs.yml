@@ -22,7 +22,8 @@ nav:
     - Generators: user-guide/generators.md
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
-  - API Documentation: api.md
+  - API Documentation:
+    - rustdoc: api.md
 
 theme:
   custom_dir: src/theme/
