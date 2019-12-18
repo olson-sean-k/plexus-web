@@ -22,9 +22,7 @@ nav:
     - Generators: user-guide/generators.md
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
-  - API Documentation:
-    - plexus: api/plexus.md
-    - theon: api/theon.md
+  - API Documentation: api.md
 
 theme:
   custom_dir: src/theme/
