@@ -12,6 +12,10 @@ build: configure
 	git rev-parse --short HEAD >$(OUT)/hash
 	peru sync
 	mkdocs build
+	# Move the template HTML into the root of the output directory.
+	# This file is used as a template for patching `rustdoc` documents.
+	mv $(DOC)/template/index.html $(OUT)/template.html
+	rm -rf $(DOC)/template
 	$(LIB)/rustdoc.sh \
 		-p theon \
 		--all-features \
@@ -19,6 +23,7 @@ build: configure
 	# Remove any previous builds of the API documentation.
 	rm -rf $(DOC)/rustdoc
 	cp -a $(LIB)/target/doc $(DOC)/rustdoc
+	# TODO: Patch `rustdoc` documents.
 	cp .gitignore CNAME $(DOC)
 
 publish: build
