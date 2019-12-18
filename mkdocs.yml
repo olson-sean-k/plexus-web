@@ -23,8 +23,8 @@ nav:
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
   - API Documentation:
-    - plexus: rustdoc/plexus/index.html
-    - theon: rustdoc/theon/index.html
+    - plexus: api/plexus.md
+    - theon: api/theon.md
 
 theme:
   custom_dir: src/theme/
