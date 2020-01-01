@@ -8,8 +8,8 @@ buffers, graphs provide efficient traversals and complex manipulation of meshes.
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
     where _arc_ typically refers to a directed adjacency.
 
-`MeshGraph`s can be created from [buffers](../buffers) and
-[generators](../generators).
+`MeshGraph`s can be created in various ways, including from [raw
+buffers](../buffers) and [iterator expressions](../generators).
 
 ```rust
 // Create a graph of a two-dimensional quadrilateral from raw buffers.
@@ -302,6 +302,11 @@ for key in keys {
 }
 ```
 
+!!! note
+    Mutations may be _dependent_ and invalidate keys. Some mutations may not be
+    able to operate on the given set of keys as trivially as seen in the example
+    above.
+
 ### Rekeying
 
 Topological views pair a key with a reference to the underlying storage of a
@@ -313,7 +318,7 @@ different topological structures, such as rekeying a `FaceView` into a
 Rekeying is useful for fallible traversals that maintain mutability. A mutable
 view can be used to look up a key and, if such a key is found, be rekeyed into
 that topology. This avoids performing the same traversal more than once in order
-to query and then convert.
+to query and then convert or mutate.
 
 ```rust
 let face = graph.face_mut(key).unwrap();

@@ -20,13 +20,12 @@ Plexus avoids exposing low-level topological operations such as inserting
 individual vertices into a graph. These kinds of operations are easily performed
 incorrectly and often require user code to verify the results. Instead, Plexus
 exposes more abstract operations that maintain topological consistency while
-being agnostic to geometry. Graphs are manipulated in a way that is more similar
-to 3D modeling software, for example.
+being agnostic to geometry.
 
 The [user guide](user-guide/getting-started.md) and [API
 documentation](rustdoc/plexus/index.html) on this website are based on the
 latest changes to the [`master` branch](https://github.com/olson-sean-k/plexus).
-At this time, these changes will likely differ significantly from crates
-published to registries like [https://crates.io](https://crates.io). See
+At this time, these changes may differ significantly from crates published to
+registries like [https://crates.io](https://crates.io). See
 [https://doc.rs](https://docs.rs/plexus) for documentation for published
 versions of Plexus.
