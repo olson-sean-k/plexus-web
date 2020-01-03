@@ -107,7 +107,7 @@ let mut graph = MeshGraph::<Vertex>::new();
     these types implement `GraphGeometry`.
 
 The associated types specified by a `GraphGeometry` implementation determine the
-type of the `geometry` member exposed by [views](../graphs/#topological-views).
+type of the `geometry` field exposed by [views](../graphs/#topological-views).
 When set to `()`, no geometry is present.
 
 Geometry is vertex-based, meaning that geometric operations depend on vertex

@@ -23,9 +23,9 @@ exposes more abstract operations that maintain topological consistency while
 being agnostic to geometry.
 
 The [user guide](user-guide/getting-started.md) and [API
-documentation](rustdoc/plexus/index.html) on this website are based on the
-latest changes to the [`master` branch](https://github.com/olson-sean-k/plexus).
-At this time, these changes may differ significantly from crates published to
-registries like [https://crates.io](https://crates.io). See
+documentation](rustdoc/plexus/index.html) on this website are based on changes
+to the [`master` branch](https://github.com/olson-sean-k/plexus).  At this time,
+these changes may differ significantly from crates published to registries like
+[https://crates.io](https://crates.io). See
 [https://doc.rs](https://docs.rs/plexus) for documentation for published
 versions of Plexus.
