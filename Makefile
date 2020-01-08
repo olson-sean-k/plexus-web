@@ -6,7 +6,8 @@ OUT:=./out
 LIB:=$(OUT)/lib
 DOC:=$(OUT)/doc
 
-build: configure
+build:
+	mkdir -p $(OUT)
 	git rev-parse --short HEAD >$(OUT)/hash
 	git remote get-url --push origin >$(OUT)/origin
 	peru sync
@@ -15,14 +16,15 @@ build: configure
 		-p theon \
 		--all-features \
 		--manifest-path=$(LIB)/Cargo.toml
-	# Remove any previous builds of the API documentation.
+	# Replace any previous builds of the API documentation.
 	rm -rf $(DOC)/rustdoc
 	cp -a $(LIB)/target/doc $(DOC)/rustdoc
 	# Copy configuration into the output.
 	cp .gitignore CNAME $(DOC)
 
 publish: build
-	# Ensure that the source revision also exists on the `origin` remote.
+	# Ensure that the source revision also exists on the upstream branch.
+	# TODO: The upstream branch may not be on the `origin` remote.
 	if [ -n "$$(git status --porcelain)" ]; then \
 		git status && false; \
 	fi
@@ -39,12 +41,6 @@ publish: build
 	git -C $(TMP) add .
 	git -C $(TMP) commit -m "Build from $$(cat $(OUT)/hash)."
 	git -C $(TMP) push origin gh-pages --force
-
-configure:
-	# `cargo` and `peru` may be absent. Fail if they are not in `PATH`.
-	hash cargo 2>/dev/null
-	hash peru 2>/dev/null
-	mkdir -p $(OUT)
 
 clean:
 	rm -rf $(OUT)
