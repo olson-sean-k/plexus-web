@@ -1,7 +1,7 @@
 SHELL:=/usr/bin/env bash
 #.SHELLFLAGS:=-e
 
-TMP:=$(shell mktemp -d)
+TMP:=$(shell mktemp -d tmp.plexus-web.XXXX)
 OUT:=./out
 LIB:=$(OUT)/lib
 DOC:=$(OUT)/doc
