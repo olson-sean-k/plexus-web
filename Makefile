@@ -2,9 +2,9 @@ SHELL:=/usr/bin/env bash
 #.SHELLFLAGS:=-e
 
 TMP:=$(shell mktemp -d)
-OUT=./out
-LIB=$(OUT)/lib
-DOC=$(OUT)/doc
+OUT:=./out
+LIB:=$(OUT)/lib
+DOC:=$(OUT)/doc
 
 build: configure
 	git rev-parse --short HEAD >$(OUT)/hash
