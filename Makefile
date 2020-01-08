@@ -1,7 +1,6 @@
 SHELL:=/usr/bin/env bash
 #.SHELLFLAGS:=-e
 
-TMP:=$(shell mktemp -d tmp.plexus-web.XXXX)
 OUT:=./out
 LIB:=$(OUT)/lib
 DOC:=$(OUT)/doc
@@ -32,15 +31,17 @@ publish: build
 	if [ "$$(git rev-parse @)" != "$$(git rev-parse @{u})" ]; then \
 		git status && false; \
 	fi
+	# Create a temporary directory.
+	mktemp --tmpdir -d tmp.plexus-web.XXXX >$(OUT)/tmp
 	# Copy the build artifacts to a temporary directory.
-	cp -a $(DOC)/* $(TMP)
+	cp -a $(DOC)/* $$(cat $(OUT)/tmp)
 	# Create a repository and push a single commit to the `origin` remote.
-	git -C $(TMP) init
-	git -C $(TMP) checkout -b gh-pages
-	git -C $(TMP) remote add origin $$(cat $(OUT)/origin)
-	git -C $(TMP) add .
-	git -C $(TMP) commit -m "Build from $$(cat $(OUT)/hash)."
-	git -C $(TMP) push origin gh-pages --force
+	git -C $$(cat $(OUT)/tmp) init
+	git -C $$(cat $(OUT)/tmp) checkout -b gh-pages
+	git -C $$(cat $(OUT)/tmp) remote add origin $$(cat $(OUT)/origin)
+	git -C $$(cat $(OUT)/tmp) add .
+	git -C $$(cat $(OUT)/tmp) commit -m "Build from $$(cat $(OUT)/hash)."
+	git -C $$(cat $(OUT)/tmp) push origin gh-pages --force
 
 clean:
 	rm -rf $(OUT)
