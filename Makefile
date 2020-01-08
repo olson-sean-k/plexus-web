@@ -1,15 +1,14 @@
 SHELL:=/usr/bin/env bash
 #.SHELLFLAGS:=-e
 
-REV?=$(shell git rev-parse --abbrev-ref HEAD)
-
+TMP:=$(shell mktemp -d)
 OUT=./out
 LIB=$(OUT)/lib
 DOC=$(OUT)/doc
 
 build: configure
-	git checkout $(REV)
 	git rev-parse --short HEAD >$(OUT)/hash
+	git remote get-url --push origin >$(OUT)/origin
 	peru sync
 	mkdocs build
 	$(LIB)/rustdoc.sh \
@@ -19,12 +18,11 @@ build: configure
 	# Remove any previous builds of the API documentation.
 	rm -rf $(DOC)/rustdoc
 	cp -a $(LIB)/target/doc $(DOC)/rustdoc
+	# Copy configuration into the output.
 	cp .gitignore CNAME $(DOC)
 
 publish: build
-	# Check out the source revision and ensure that it also exists on the
-	# `origin` remote.
-	git checkout $(REV)
+	# Ensure that the source revision also exists on the `origin` remote.
 	if [ -n "$$(git status --porcelain)" ]; then \
 		git status && false; \
 	fi
@@ -32,17 +30,15 @@ publish: build
 	if [ "$$(git rev-parse @)" != "$$(git rev-parse @{u})" ]; then \
 		git status && false; \
 	fi
-	# Check out `gh-pages` and remove all files.
-	git checkout gh-pages
-	git rm -rf .
-	# Restore the `.gitignore` file.
-	git checkout HEAD -- .gitignore
-	cp -a $(DOC)/* .
-	git add .
-	git commit --allow-empty-message -m ""
-	git reset $$(git commit-tree HEAD^{tree} -m "Build from $$(cat $(OUT)/hash).")
-	git push origin gh-pages --force
-	git checkout $(REV)
+	# Copy the build artifacts to a temporary directory.
+	cp -a $(DOC)/* $(TMP)
+	# Create a repository and push a single commit to the `origin` remote.
+	git -C $(TMP) init
+	git -C $(TMP) checkout -b gh-pages
+	git -C $(TMP) remote add origin $$(cat $(OUT)/origin)
+	git -C $(TMP) add .
+	git -C $(TMP) commit -m "Build from $$(cat $(OUT)/hash)."
+	git -C $(TMP) push origin gh-pages --force
 
 configure:
 	# `cargo` and `peru` may be absent. Fail if they are not in `PATH`.
