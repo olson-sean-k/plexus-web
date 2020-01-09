@@ -33,8 +33,8 @@ publish: build
 	fi
 	# Create a temporary directory.
 	mktemp --tmpdir -d tmp.plexus-web.XXXX >$(OUT)/tmp
-	# Copy the build artifacts to a temporary directory.
-	cp -a $(DOC)/* $$(cat $(OUT)/tmp)
+	# Copy the build artifacts into the temporary directory.
+	cp -aT $(DOC) $$(cat $(OUT)/tmp)
 	# Create a repository and push a single commit to the `origin` remote.
 	git -C $$(cat $(OUT)/tmp) init
 	git -C $$(cat $(OUT)/tmp) checkout -b gh-pages
