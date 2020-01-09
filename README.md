@@ -6,8 +6,9 @@ The following tools are needed to build and publish the website (not including
 common Posix and Linux tools):
 
 - [Rust](https://www.rust-lang.org/tools/install)
+- Python
 - [Peru](https://github.com/buildinspace/peru#installation)
-- [MkDocs](https://www.mkdocs.org/#installation) (and Python)
+- [MkDocs](https://www.mkdocs.org/#installation)
 - Make
 - Git
 
