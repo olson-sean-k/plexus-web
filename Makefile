@@ -21,16 +21,7 @@ build:
 	# Copy configuration into the output.
 	cp .gitignore CNAME $(DOC)
 
-publish: build
-	# Ensure that the source revision also exists on the upstream branch.
-	# TODO: The upstream branch may not be on the `origin` remote.
-	if [ -n "$$(git status --porcelain)" ]; then \
-		git status && false; \
-	fi
-	git fetch
-	if [ "$$(git rev-parse @)" != "$$(git rev-parse @{u})" ]; then \
-		git status && false; \
-	fi
+publish: build upstream
 	# Create a temporary directory.
 	mktemp --tmpdir -d tmp.plexus-web.XXXX >$(OUT)/tmp
 	# Copy the build artifacts into the temporary directory.
@@ -42,6 +33,17 @@ publish: build
 	git -C $$(cat $(OUT)/tmp) add .
 	git -C $$(cat $(OUT)/tmp) commit -m "Build from $$(cat $(OUT)/hash)."
 	git -C $$(cat $(OUT)/tmp) push origin gh-pages --force
+
+upstream:
+	# TODO: The upstream branch may not be on the `origin` remote.
+	# Ensure that the source revision also exists on the upstream branch.
+	if [ -n "$$(git status --porcelain)" ]; then \
+		git status && false; \
+	fi
+	git fetch
+	if [ "$$(git rev-parse @)" != "$$(git rev-parse @{u})" ]; then \
+		git status && false; \
+	fi
 
 clean:
 	rm -rf $(OUT)
