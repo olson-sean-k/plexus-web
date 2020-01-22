@@ -307,16 +307,16 @@ for key in keys {
     able to operate on the given set of keys as trivially as seen in the example
     above.
 
-### Rekeying
+### Rebinding
 
 Topological views pair a key with a reference to the underlying storage of a
-graph. Given a view, it is possible to _rekey_ the view to construct a new view
-using the same underlying storage. It is even possible to rekey between
-different topological structures, such as rekeying a `FaceView` into a
+graph. Given a view, it is possible to _rebind_ the view to construct a new view
+using the same underlying storage. It is even possible to rebind between
+different topological structures, such as rebinding a `FaceView` into a
 `VertexView`.
 
-Rekeying is useful for fallible traversals that maintain mutability. A mutable
-view can be used to look up a key and, if such a key is found, be rekeyed into
+Rebinding is useful for fallible traversals that maintain mutability. A mutable
+view can be used to look up a key and, if such a key is found, be rebound into
 that topology. This avoids performing the same traversal more than once in order
 to query and then convert or mutate.
 
@@ -334,7 +334,7 @@ let mut face = {
         })
         .map(|face| face.key());
     if let Some(key) = key {
-        face.rekey(key).unwrap() // Rekey into the boundary face.
+        face.rebind(key).unwrap() // Rebind into the boundary face.
     }
     else {
         face // Use the initiating face.
@@ -342,9 +342,9 @@ let mut face = {
 };
 ```
 
-Rekeying can also be useful for code that only operates on topological views and
-does not have access to the associated `MeshGraph`, because it allows arbitrary
-access to the graph's structure.
+Rebinding can also be useful for code that only operates on topological views
+and does not have access to the associated `MeshGraph`, because it allows
+arbitrary access to the graph's structure.
 
 ## Topological Mutations
 
@@ -554,4 +554,10 @@ where
 {
     // ...
 }
+
+Some topological views are strongly related and have common semantics. These
+views can be abstracted via traits. The `Edgoid` trait is implemented by
+`ArcView` and `EdgeView` and allows either type to be converted into an arc or
+edge that forms a composite edge. Similarly, the `Ringoid` trait is implemented
+by `FaceView` and `RingView` and provides access to either type's interior arcs.
 ```
