@@ -4,4 +4,4 @@ imports:
 
 git module plexus:
   url: https://github.com/olson-sean-k/plexus.git
-  rev: f1e67a40ec7032f6cee6f7e1da32a625addfb3bf
+  rev: 04cb0f97381347d8475454109c3bd6db297df834
