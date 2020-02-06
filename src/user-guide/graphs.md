@@ -67,7 +67,7 @@ open path over vertices $A$, $B$, and $C$ is notated as a sequence
 $\overrightarrow{(A,B,C)}$. A closed path over vertices $A$, $B$, and $C$
 includes the arc $\overrightarrow{CA}$ and is notated as a sequence
 $\overrightarrow{(A,B,C,A)}$ or a set $\overrightarrow{\{A,B,C\}}$. This
-notation may also be used to notate arcs, but arcs typically used the shorthand
+notation may also be used to notate arcs, but arcs typically use the shorthand
 notation shown above.
 
 Together with vertices and faces, the connectivity of arcs allows for efficient
