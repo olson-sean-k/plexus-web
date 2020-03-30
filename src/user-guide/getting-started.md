@@ -15,7 +15,7 @@ is documented here. Consider taking a dependency on a `master` revision.
 
 [dependencies.plexus]
 git = "https://github.com/olson-sean-k/plexus.git"
-rev = "78ae8bd"
+rev = "5462a7d"
 ```
 
 Plexus interacts with other crates in the Rust ecosystem. Most importantly, it

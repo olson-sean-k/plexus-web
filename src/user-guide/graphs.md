@@ -524,7 +524,7 @@ geometric operations, such as computing edge midpoints. This example subdivides
 a face in a mesh by splitting arcs at their midpoints:
 
 ```rust hl_lines="3 4"
-pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>, G>) -> FaceView<&mut MeshGraph<G>, G>
+pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>>) -> FaceView<&mut MeshGraph<G>>
 where
     G: EdgeMidpoint + GraphGeometry,
     G::Vertex: AsPosition,
@@ -557,7 +557,7 @@ The following example expresses type bounds for a function that computes the
 area of faces in two-dimensional graphs:
 
 ```rust hl_lines="4 5"
-pub fn area<G>(face: FaceView<&MeshGraph<G>, G>) -> Scalar<VertexPosition<G>>
+pub fn area<G>(face: FaceView<&MeshGraph<G>>) -> Scalar<VertexPosition<G>>
 where
     G: GraphGeometry,
     G::Vertex: AsPosition,
