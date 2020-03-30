@@ -14,10 +14,11 @@ When publishing, these artifacts are copied into a temporary directory via
 
 The `gh-pages` branch typically has a single commit and is used exclusively for
 build artifacts hosted by GitHub Pages (there is no history). Publishing with
-`make publish` forces a push to the push specification of the `origin/gh-pages`.
+`make publish` forces a push to the push specification of the `origin/gh-pages`
+branch.
 
 Peru is used to fetch the Plexus source code. This code is used to generate API
 documentation via `rustdoc`.
 
 It is possible to test changes via `mkdocs serve`, but this will not serve the
-`rustdoc` API documentation (even after executing `make build`).
+`rustdoc` API documentation.
