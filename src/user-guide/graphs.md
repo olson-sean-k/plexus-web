@@ -571,4 +571,4 @@ Some topological views are strongly related and have common semantics. These
 views can be abstracted via traits. The `Edgoid` trait is implemented by
 `ArcView` and `EdgeView` and allows either type to be converted into an arc or
 edge that forms a composite edge. Similarly, the `Ringoid` trait is implemented
-by `FaceView` and `RingView` and provides access to either type's interior arcs.
+by `FaceView` and `Ring` and provides access to either type's interior arcs.
