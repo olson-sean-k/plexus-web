@@ -12,7 +12,6 @@ edit_uri: ""
 nav:
   - Home:
     - About: index.md
-    - Contributing: contributing.md
     - License: license.md
   - User Guide:
     - Getting Started: user-guide/getting-started.md
@@ -22,6 +21,8 @@ nav:
     - Generators: user-guide/generators.md
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
+  - Contributor Guide:
+    - Getting Started: contributor-guide/getting-started.md
   - API Documentation:
     - plexus: rustdoc/plexus/index.html
     - theon: rustdoc/theon/index.html
