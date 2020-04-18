@@ -11,8 +11,10 @@ build:
 	git remote get-url --push origin >$(OUT)/origin
 	peru sync
 	mkdocs build
-	$(LIB)/rustdoc.sh \
+	cargo +nightly doc \
+		-p plexus \
 		-p theon \
+		--no-deps \
 		--all-features \
 		--manifest-path=$(LIB)/Cargo.toml
 	# Replace any previous builds of the API documentation.
