@@ -11,7 +11,12 @@ build:
 	git remote get-url --push origin >$(OUT)/origin
 	peru sync
 	mkdocs build
-	cargo +nightly doc \
+	# TODO: It should be possible to use `cargo +nightly doc` here, but due to
+	#       an issue resolving paths for `cargo doc` vs. `cargo test`, this
+	#       script is used instead.
+	#
+	#       See https://github.com/rust-lang/cargo/issues/8097
+	$(LIB)/rustdoc.sh \
 		-p plexus \
 		-p theon \
 		--no-deps \
