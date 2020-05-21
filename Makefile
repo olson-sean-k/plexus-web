@@ -5,18 +5,20 @@ OUT:=./out
 LIB:=$(OUT)/lib
 DOC:=$(OUT)/doc
 
+# TODO: It is not yet possible to use Cargo configuration to embed HTML headers
+#       in documentation. Use the absolute path to the headers included with
+#       Plexus to document all specified crates.
+#
+#       See https://github.com/rust-lang/cargo/issues/8097
+build: export RUSTDOCFLAGS=--html-in-header=$(realpath $(LIB)/doc/katex-header.html)
 build:
 	mkdir -p $(OUT)
 	git rev-parse --short HEAD >$(OUT)/hash
 	git remote get-url --push origin >$(OUT)/origin
 	peru sync
 	mkdocs build
-	# TODO: It should be possible to use `cargo +nightly doc` here, but due to
-	#       an issue resolving paths for `cargo doc` vs. `cargo test`, this
-	#       script is used instead.
-	#
-	#       See https://github.com/rust-lang/cargo/issues/8097
-	$(LIB)/rustdoc.sh \
+	cargo +nightly doc \
+		-p decorum \
 		-p plexus \
 		-p theon \
 		--no-deps \
