@@ -24,8 +24,9 @@ nav:
   - Contributor Guide:
     - Getting Started: contributor-guide/getting-started.md
   - API Documentation:
-    - decorum: rustdoc/decorum/index.html
+    # List Plexus first so that the collapsed tab links to its documentation.
     - plexus: rustdoc/plexus/index.html
+    - decorum: rustdoc/decorum/index.html
     - theon: rustdoc/theon/index.html
 
 theme:
