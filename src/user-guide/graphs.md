@@ -9,7 +9,8 @@ buffers, graphs provide efficient traversals and complex manipulation of meshes.
     where _arc_ typically refers to a directed adjacency.
 
 `MeshGraph`s can be created in various ways, including from [raw
-buffers](../buffers) and [iterator expressions](../generators).
+buffers](../buffers), [iterator expressions](../generators), and incremental
+builders.
 
 ```rust
 // Create a graph of a two-dimensional quadrilateral from raw buffers.
@@ -27,8 +28,8 @@ let mut graph = Cube::new()
 
 ## Representation
 
-A `MeshGraph` is conceptually composed of _vertices_, _arcs_, _edges_, and
-_faces_. The figure below summarizes the connectivity in a `MeshGraph`.
+A `MeshGraph` is composed of four basic entities: _vertices_, _arcs_, _edges_,
+and _faces_. The figure below summarizes the connectivity in a `MeshGraph`.
 
 ![Half-Edge Graph Figure](../img/heg.svg)
 
@@ -84,9 +85,9 @@ of a given face.
     structures such as singularities and edge-fans cannot be modeled using
     `MeshGraph`.
 
-`MeshGraph`s store topological data using associative collections and mesh data
-is accessed using keys into this storage. Keys are exposed as strongly typed and
-opaque values, which can be used to refer to a topological structure.
+`MeshGraph`s store entities associatively and mesh data is accessed using keys
+into storage. Keys are exposed as strongly typed and opaque values, which can be
+used to refer to an entity.
 
 ## Geometry
 
@@ -118,22 +119,22 @@ let mut graph = MeshGraph::<Vertex>::new();
     these types implement `GraphGeometry`.
 
 The associated types specified by a `GraphGeometry` implementation determine the
-type of the `geometry` field exposed by [views](../graphs/#topological-views).
-When set to `()`, no geometry is present.
+type of the `geometry` field exposed by [views](../graphs/#views). When set to
+`()`, no geometry is present.
 
-Geometry is vertex-based, meaning that geometric operations depend on vertex
-geometry exposing some notion of positional data via the `AsPosition` trait. If
-geometry does not have this property, then geometric operations will not be
-available. Read more about geometric traits and spatial operations
-[here](../geometry).
+`MeshGraph` is agnostic to geometry and any types satisfying the bounds on
+`GraphGeometry`'s associated types (namely `Copy` and `Default`) may be used.
+However, if vertex geometry exposes some notion of positional data via the
+`AsPosition` trait, then geometric features become available. Read more about
+geometric traits and spatial operations [here](../geometry).
 
-## Topological Views
+## Views
 
-`MeshGraph`s expose _views_ over their topological structure (vertices, arcs,
-edges, and faces). Views are obtained using keys or iteration and behave
-similarly to references. They provide the primary API for interacting with a
-`MeshGraph`'s topology and geometry. There are three types of views summarized
-below:
+`MeshGraph`s expose _views_ over their entities (vertices, arcs, edges, and
+faces). Views are obtained using keys or iteration and provide the primary API
+for interacting with a `MeshGraph`'s topology and geometry. A view is a kind of
+"smart pointer" to an entity in a graph. There are three types of views
+summarized below:
 
 | Type      | Traversal | Exclusive | Geometry  | Topology  |
 |-----------|-----------|-----------|-----------|-----------|
@@ -141,10 +142,10 @@ below:
 | Mutable   | Yes       | Yes       | Mutable   | Mutable   |
 | Orphan    | No        | No        | Mutable   | N/A       |
 
-_Immutable_ and _mutable views_ behave similarly to references: immutable views
-cannot mutate a graph and are not exclusive while mutable views may mutate both
-the geometry and topology of a graph but are exclusive. This example uses a view
-to traverse a graph:
+_Immutable_ and _mutable views_ behave similarly to Rust's `&` and `&mut`
+references: immutable views cannot mutate a graph and are not exclusive while
+mutable views may mutate both the geometry and topology of a graph but are
+exclusive. This example uses a view to traverse a graph:
 
 ```rust hl_lines="15 16 17 18 19 20"
 type E3 = Point3<N64>;
@@ -158,7 +159,7 @@ let mut graph = primitive::zip_vertices((
 .map_vertices(|(position, normal)| Vertex::new(position, normal))
 .collect::<MeshGraph<Vertex>>();
 
-// Get a view of a face and its opposite face.
+// Get a view of a face and its opposite face in the cube.
 let face = graph.faces().nth(0).expect("cube");
 let opposite = face
     .into_arc()
@@ -193,17 +194,77 @@ Immutable and mutable views are both represented by view types, such as
 `FaceView`. Orphan views are represented by orphan view types, such as
 `FaceOrphan`.
 
+## Interior Reborrows
+
+Views associate a key with a reference to storage in order to expose an entity.
+Because views maintain these references internally and behave like Rust
+references, they are typically manipulated by value rather than by reference
+(for example, in function parameters).
+
+To borrow views from another view, an _interior reborrow_ is used, which
+reborrows a view's internal reference to storage. Interior reborrows are exposed
+by three associated functions which mirror borrowing using Rust references.
+
+| Function   | Receiver    | Borrow   | Output    |
+|------------|-------------|----------|-----------|
+| `to_ref`   | `&self`     | `&_`     | Immutable |
+| `to_mut`   | `&mut self` | `&mut _` | Mutable   |
+| `into_ref` | `self`      | `&*_`    | Immutable |
+
+Naturally, the `to_mut` reborrow is only supported by mutable views, but
+`to_ref` and `into_ref` are provided by both immutable and mutable views. The
+`into_ref` reborrow can be used to downgrade a mutable view into an immutable
+view.
+
+## Rebinding
+
+Views pair a key with a reference to the underlying storage of a graph. A view
+_binds_ a key to some storage. Given a view, it is possible to _rebind_ the view
+to construct a new view using the same underlying storage. It is even possible
+to rebind into different entities, such as rebinding a `FaceView` into a
+`VertexView`.
+
+For example, rebinding can be used for fallible traversals that maintain
+mutability. A mutable view can be used to look up a key and, if such a key is
+found, be rebound into that topology.
+
+```rust
+let face = graph.face_mut(key).unwrap();
+// Find a face along a boundary. If no such face is found, continue to use the
+// initiating face.
+let mut face = {
+    let key = face
+        .traverse_by_depth()
+        .find(|face| {
+            face.interior_arcs()
+                .map(|arc| arc.into_opposite_arc())
+                .any(|arc| arc.is_boundary_arc())
+        })
+        .map(|face| face.key());
+    if let Some(key) = key {
+        face.rebind(key).unwrap() // Rebind into the boundary face.
+    }
+    else {
+        face // Use the initiating face.
+    }
+};
+```
+
+Rebinding can also be useful for code that only operates on views without access
+to the associated `MeshGraph`, because it allows arbitrary access to the graph's
+structure so long as the appropriate keys are available.
+
 ## Traversals
 
-Topological views can be used to traverse a graph. Traversals are an important
-feature of graphs that are not supported by iterator expressions or buffers.
-Most traversals involve some notion of adjacency, but `MeshGraph` also provides
-categorical traversals.
+Views can be used to traverse and search a graph's structure. Traversals are an
+important feature of graphs that are not supported by iterator expressions nor
+buffers.  Most traversals involve some notion of adjacency, but `MeshGraph` also
+provides categorical traversals.
 
 ### One-to-One
 
-Conversions and accessors provide one-to-one traversals from one topological
-structure to another. Conversions consume a view and emit another view while
+Conversions and accessors provide one-to-one traversals from one entity
+to another. Conversions consume a view and emit another view while
 accessors borrow a view and use that borrow to produce another view. Accessors
 only expose immutable views with a limited lifetime while conversions expose
 views with the same lifetime and mutability as the source view.
@@ -220,18 +281,46 @@ Conversions and accessors are distinguished using standard Rust naming
 conventions. For example, `into_outgoing_arc` is consuming and `outgoing_arc` is
 borrowing; both traverse from a vertex to its outgoing arc.
 
+Note that accessors are just sugar for performing an [interior
+reborrow](../graphs/#interior-reborrows) before using a conversion. Accessors
+allow for more fluent sequences of function calls without the need to insert
+repeated `to_ref` calls.
+
 !!! note
     It is not possible to perform [topological
     mutations](../graphs/#topological-mutations) using a view obtained via a
     borrowing traversal, because these views are always
-    [immutable](../graphs/#topological-views).
+    [immutable](../graphs/#views). Conversions and interior reborrows must be
+    used instead.
+
+For some entities with a notion of adjacency, it is possible to query the
+shortest path between two such entities, such as vertices.
+
+```rust
+// Gets a `Path` from this vertex to the vertex with the given key.
+let path = vertex.into_shortest_path(key).unwrap();
+```
+
+It's also possible to use a custom metric. For example, rather than a logical
+distance between vertices, the Euclidean distance between vertices can be used.
+
+```rust
+let path = vertex.into_shortest_path_with(key, |a, b| {
+    // Compute the Euclidean distance between the vertices `a` and `b`.
+    R64::from((b.position() - a.position()).magnitude())
+}).unwrap();
+```
 
 ### One-to-Many
 
 A _circulator_ is a type of iterator that provides a one-to-many traversal that
-examines all of the immediate neighbors of a topological structure. For example,
-the face circulator of a vertex yields all faces that share that vertex in
-order.
+examines all of the immediate neighbors of an entity. For example, the face
+circulator of a vertex yields all faces that share that vertex in order.
+
+!!! note
+    Circlators only expose **immediately** adjacent entities and do not traverse
+    the entire graph. Use search traversals to examine entities in a
+    topologically connected group.
 
 ```rust
 for face in vertex.neighboring_faces() {
@@ -252,9 +341,9 @@ for mut face in vertex.neighboring_face_orphans() {
 }
 ```
 
-_Search traversals_ visit all connected topological structures with some notion
-of adjacency. Both vertices and faces can be traversed in this way to perform
-searches using breadth- and depth-first ordering.
+_Search traversals_ visit all connected entities with some notion of adjacency.
+Both vertices and faces can be traversed in this way to perform searches using
+breadth- and depth-first ordering.
 
 ```rust
 if let Some(vertex) = vertex
@@ -272,10 +361,9 @@ if let Some(vertex) = vertex
     group with which the initiating view is associated; they do not necessarily
     visit every vertex or face that is a member of a particular graph.
 
-`MeshGraph`s also directly expose topological structures via iterators, but
-without a deterministic ordering. These categorical iterators are always
-exhaustive, and visit all topological structures in a graph regardless of their
-connectivity.
+`MeshGraph`s also directly expose entities by type via iterators, but without a
+deterministic ordering. These categorical iterators are always exhaustive, and
+visit all topological structures in a graph regardless of their connectivity.
 
 ```rust
 let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
@@ -316,46 +404,8 @@ for key in keys {
 !!! note
     Mutations may be _dependent_ and invalidate keys. Some mutations may not be
     able to operate on the given set of keys as trivially as seen in the example
-    above.
-
-### Rebinding
-
-Topological views pair a key with a reference to the underlying storage of a
-graph. Given a view, it is possible to _rebind_ the view to construct a new view
-using the same underlying storage. It is even possible to rebind between
-different topological structures, such as rebinding a `FaceView` into a
-`VertexView`.
-
-Rebinding is useful for fallible traversals that maintain mutability. A mutable
-view can be used to look up a key and, if such a key is found, be rebound into
-that topology. This avoids performing the same traversal more than once in order
-to query and then convert or mutate.
-
-```rust
-let face = graph.face_mut(key).unwrap();
-// Find a face along a boundary. If no such face is found, continue to use the
-// initiating face.
-let mut face = {
-    let key = face
-        .traverse_by_depth()
-        .find(|face| {
-            face.interior_arcs()
-                .map(|arc| arc.into_opposite_arc())
-                .any(|arc| arc.is_boundary_arc())
-        })
-        .map(|face| face.key());
-    if let Some(key) = key {
-        face.rebind(key).unwrap() // Rebind into the boundary face.
-    }
-    else {
-        face // Use the initiating face.
-    }
-};
-```
-
-Rebinding can also be useful for code that only operates on topological views
-and does not have access to the associated `MeshGraph`, because it allows
-arbitrary access to the graph's structure.
+    above. Poking a face is an independent mutation and does not affect other
+    faces in a graph.
 
 ## Topological Mutations
 
@@ -567,8 +617,10 @@ where
 }
 ```
 
-Some topological views are strongly related and have common semantics. These
-views can be abstracted via traits. The `Edgoid` trait is implemented by
-`ArcView` and `EdgeView` and allows either type to be converted into an arc or
-edge that forms a composite edge. Similarly, the `Ringoid` trait is implemented
-by `FaceView` and `Ring` and provides access to either type's interior arcs.
+Some entities and meta-entities are strongly related and have common semantics.
+These entities and their views can be abstracted via traits. The `ToArc` trait
+is implemented by `ArcView` and `EdgeView` and allows either type to be
+converted into an arc that participates in its composite edge. Similarly, the
+`ToRing` trait is implemented by `FaceView` and `Ring` and allows either type to
+be converted into its associated ring. Geometric operation traits like
+`EdgeMidpoint` use these traits to accept related entities, for example.
