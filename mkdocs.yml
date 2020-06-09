@@ -24,14 +24,15 @@ nav:
   - Contributor Guide:
     - Getting Started: contributor-guide/getting-started.md
   - API Documentation:
+    - decorum: rustdoc/decorum/index.html
     - plexus: rustdoc/plexus/index.html
     - theon: rustdoc/theon/index.html
 
 theme:
   custom_dir: src/theme/
   favicon: img/favicon.ico
-  feature:
-    tabs: true
+  features:
+    - tabs
   name: material
   language: en
   logo: img/plexus-minimal.svg
@@ -47,15 +48,18 @@ markdown_extensions:
   - toc:
       permalink: true
 
+plugins:
+  - search:
+      lang:
+        - en
+
 extra:
   # TODO: Enable when the site is ready.
   # disqus: 'plexus-rs'
-  search:
-    language: en
   social:
-    - type: github
+    - icon: fontawesome/brands/github-alt
       link: https://github.com/olson-sean-k
-    - type: twitter
+    - icon: fontawesome/brands/twitter
       link: https://twitter.com/olsonseank
 
 extra_javascript:
