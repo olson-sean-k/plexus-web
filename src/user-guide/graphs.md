@@ -14,16 +14,16 @@ builders.
 
 ```rust
 // Create a graph of a two-dimensional quadrilateral from raw buffers.
-let mut graph = MeshGraph::<Point2<N64>>::from_raw_buffers(
+let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
     vec![Tetragon::new(0usize, 1, 2, 3)],
     vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)],
 )
 .unwrap();
 
 // Create a graph with positional data from a unit cube.
-let mut graph = Cube::new()
-    .polygons::<Position<Point3<N64>>>()
-    .collect<MeshGraph<Point3<N64>>>();
+let mut graph: MeshGraph<Point3<R64>> = Cube::new()
+    .polygons::<Position<Point3<R64>>>()
+    .collect();
 ```
 
 ## Representation
@@ -47,7 +47,7 @@ $\overrightarrow{AB}$ and $\overrightarrow{BA}$. Together, these arcs form an
 _edge_, which is not directed. An edge and its two arcs are together called a
 _composite edge_.
 
-Arcs are connected to their neighbors, known as _next_ and _previous arcs_. A
+Arcs are connected to adjacent arcs, known as _next_ and _previous arcs_. A
 traversal along a series of arcs is a _path_. The path formed by traversing from
 an arc to its next arc and so on is a _ring_. When a face is present within a
 ring, the arcs will refer to that face and the face will refer to exactly one of
@@ -72,9 +72,9 @@ notation may also be used to notate arcs, but arcs typically use the shorthand
 notation shown above.
 
 Together with vertices and faces, the connectivity of arcs allows for efficient
-traversals of topology. For example, it becomes trivial to find neighboring
-topologies, such as the faces that share a given vertex or the neighboring faces
-of a given face.
+traversals of topology. For example, it becomes trivial to find adjacent
+topologies, such as the faces that share a given vertex or the adjacent faces of
+a given face.
 
 !!! warning
     The `MeshGraph` data structure has some limitations. With few exceptions,
@@ -112,7 +112,7 @@ let mut graph = MeshGraph::<Vertex>::new();
 ```
 
 !!! note
-    Most examples on this page use the `N64` and `R64` types from the
+    Most examples on this page use the `R64` type from the
     [`decorum`](https://crates.io/crates/decorum) crate and the `Point2` and
     `Point3` types from the [`nalgebra`](https://crates.io/crates/nalgebra)
     crate for graph geometry. When the `geometry-nalgebra` feature is enabled,
@@ -148,16 +148,16 @@ mutable views may mutate both the geometry and topology of a graph but are
 exclusive. This example uses a view to traverse a graph:
 
 ```rust hl_lines="15 16 17 18 19 20"
-type E3 = Point3<N64>;
+type E3 = Point3<R64>;
 
 // Create a graph with positional and normal data from a unit cube.
 let cube = Cube::new();
-let mut graph = primitive::zip_vertices((
+let mut graph: MeshGraph<Vertex> = primitive::zip_vertices((
     cube.polygons::<Position<E3>>(),
     cube.polygons::<Normal<E3>>(),
 ))
 .map_vertices(|(position, normal)| Vertex::new(position, normal))
-.collect::<MeshGraph<Vertex>>();
+.collect();
 
 // Get a view of a face and its opposite face in the cube.
 let face = graph.faces().nth(0).expect("cube");
@@ -180,9 +180,9 @@ structures in a graph sometimes emit orphan views.
 
 ```rust hl_lines="7 8 9"
 // Create a graph with positional data from a UV-sphere.
-let mut graph = UvSphere::new(8, 8)
+let mut graph: MeshGraph<Point3<f64>> = UvSphere::new(8, 8)
     .polygons::<Position<Point3<f64>>>()
-    .collect_with_indexer::<MeshGraph<Point3<f64>>, _>(LruIndexer::default());
+    .collect_with_indexer(LruIndexer::default());
 
 // Scale the position data in all vertices.
 for mut vertex in graph.vertex_orphans() {
@@ -202,19 +202,25 @@ references, they are typically manipulated by value rather than by reference
 (for example, in function parameters).
 
 To borrow views from another view, an _interior reborrow_ is used, which
-reborrows a view's internal reference to storage. Interior reborrows are exposed
-by three associated functions which mirror borrowing using Rust references.
+reborrows a view's internal reference to storage containing a graph's entities.
+Immutable reborrows can be performed explicitly using the conversions described
+below:
 
 | Function   | Receiver    | Borrow   | Output    |
 |------------|-------------|----------|-----------|
 | `to_ref`   | `&self`     | `&_`     | Immutable |
-| `to_mut`   | `&mut self` | `&mut _` | Mutable   |
 | `into_ref` | `self`      | `&*_`    | Immutable |
 
-Naturally, the `to_mut` reborrow is only supported by mutable views, but
-`to_ref` and `into_ref` are provided by both immutable and mutable views. The
-`into_ref` reborrow can be used to downgrade a mutable view into an immutable
-view.
+It is not possible to explicitly perform a mutable interior reborrow. Such a
+reborrow could invalidate the originating view by performing topological
+mutations. Mutable reborrows are performed beneath safe APIs, such as those
+exposing iterators over orphan views that cannot perform topological mutations.
+
+!!! warning
+    The `into_ref` conversion is analogous to an immutable reborrow of a mutable
+    `&mut` Rust reference. Importantly, the mutable source reference remains
+    despite the reborrow and so it is not possible to obtain an additional
+    mutable view after using `into_ref` until the originating view is dropped.
 
 ## Rebinding
 
@@ -314,16 +320,16 @@ let path = vertex.into_shortest_path_with(key, |a, b| {
 ### One-to-Many
 
 A _circulator_ is a type of iterator that provides a one-to-many traversal that
-examines all of the immediate neighbors of an entity. For example, the face
-circulator of a vertex yields all faces that share that vertex in order.
+examines immediately adjacent entities. For example, the face circulator of a
+vertex yields all faces that share that vertex, in order.
 
 !!! note
     Circlators only expose **immediately** adjacent entities and do not traverse
-    the entire graph. Use search traversals to examine entities in a
+    the entire graph. Use search traversals to examine all entities in a
     topologically connected group.
 
 ```rust
-for face in vertex.neighboring_faces() {
+for face in vertex.adjacent_faces() {
     for arc in face.interior_arcs() {
         // ...
     }
@@ -333,10 +339,10 @@ for face in vertex.neighboring_faces() {
 Circulators generally begin iteration from a [leading
 arc](../graphs/#representation) and then traverse topology in a deterministic
 order from that arc. Because mutability requires orphan views, only the geometry
-of immediate neighbors can be mutated using circulators.
+of adjacent entities can be mutated using circulators.
 
 ```rust
-for mut face in vertex.neighboring_face_orphans() {
+for mut face in vertex.adjacent_face_orphans() {
     face.geometry = Color4::white();
 }
 ```
@@ -385,9 +391,9 @@ lookup each mutable view using those keys.
 
 ```rust hl_lines="7 8 9 10"
 // Create a graph with positional data from a unit cube.
-let mut graph = Cube::new()
-    .polygons::<Position<Point3<N64>>>()
-    .collect::<MeshGraph<Point3<N64>>>();
+let mut graph: MeshGraph<Point3<R64>> = Cube::new()
+    .polygons::<Position<Point3<R64>>>()
+    .collect();
 
 // Collect the keys of the faces in the graph.
 let keys = graph
@@ -443,14 +449,14 @@ let span = (source, destination);
 Graphs also provide topological mutations that may operate over an entire graph.
 
 ```rust hl_lines="10"
-type E3 = Point3<N64>;
+type E3 = Point3<R64>;
 
 let cube = Cube::new();
-let mut graph = primitive::zip_vertices((
+let mut graph: MeshGraph<Vertex> = primitive::zip_vertices((
     cube.polygons::<Position<E3>>(),
     cube.polygons::<Normal<E3>>(),
 ))
-.collect::<MeshGraph<Vertex>>();
+.collect();
 
 graph.triangulate(); // Triangulates all faces in the graph.
 ```
@@ -548,13 +554,13 @@ impl GraphGeometry for Vertex {
     type Face = ();
 }
 
-let mut graph = Cube::new()
-    .polygons::<Position<Point3<N64>>>()
+let mut graph: MeshGraph<Vertex> = Cube::new()
+    .polygons::<Position<Point3<R64>>>()
     .map_vertices(|position| Vertex {
         position,
         normal: Unit::x(),
     })
-    .collect<MeshGraph<Vertex>>();
+    .collect();
 
 // Write arbitrary data to the payload.
 let mut vertex = graph.vertex_orphans().nth(0).unwrap();

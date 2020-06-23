@@ -15,7 +15,7 @@ is documented here. Consider taking a dependency on a `master` revision.
 
 [dependencies.plexus]
 git = "https://github.com/olson-sean-k/plexus.git"
-rev = "c836ef3"
+rev = "931cf87"
 ```
 
 Plexus interacts with other crates in the Rust ecosystem. Most importantly, it
@@ -51,7 +51,7 @@ nalgebra = "^0.18.0"
 
 [dependencies.plexus]
 git = "https://github.com/olson-sean-k/plexus.git"
-rev = "c836ef3"
+rev = "931cf87"
 default-features = false
 features = [
     "encoding-ply",
