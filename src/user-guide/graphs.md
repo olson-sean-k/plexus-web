@@ -9,8 +9,8 @@ buffers, graphs provide efficient traversals and complex manipulation of meshes.
     where _arc_ typically refers to a directed adjacency.
 
 `MeshGraph`s can be created in various ways, including from [raw
-buffers](../buffers), [iterator expressions](../generators), and incremental
-builders.
+buffers](../buffers), [iterator expressions](../generators), incremental
+builders, and encodings.
 
 === "Raw Buffers"
     ```rust linenums="1"
@@ -21,7 +21,7 @@ builders.
     )
     .unwrap();
     ```
-=== "Iterator Expression"
+=== "Iterator"
     ```rust linenums="1"
     // Create a graph with positional data from a unit cube.
     let mut graph: MeshGraph<Point3<R64>> = Cube::new()
@@ -48,6 +48,15 @@ builders.
 
     // Create a graph of a two-dimensional triangle.
     let graph: MeshGraph<Point2<f64>> = trigon([(0.0, 0.0), (0.0, 1.0), (1.0, 1.0)]).unwrap();
+    ```
+=== "PLY"
+    ```rust linenums="1"
+    // Create a graph from a PLY file.
+    let (graph, _) = MeshGraph::<Point3<R64>>::from_ply(
+        PositionEncoding::default(),
+        File::open("teapot.ply").unwrap(),
+    )
+    .unwrap();
     ```
 
 ## Representation
