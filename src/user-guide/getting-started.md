@@ -1,6 +1,6 @@
 To get started with Plexus, add a dependency to the `Cargo.toml` manifest.
 
-```toml
+```toml linenums="1"
 [dependencies]
 plexus = "0.0.11" # Unstable. Require exact version.
 ```
@@ -10,7 +10,7 @@ branch](https://github.com/olson-sean-k/plexus). Because Plexus is in its
 initial development phase, published crates may differ significantly from what
 is documented here. Consider taking a dependency on a `master` revision.
 
-```toml
+```toml linenums="1"
 [dependencies]
 
 [dependencies.plexus]
@@ -31,7 +31,7 @@ Plexus and is useful for floating-point values that support `Hash` and various
 numeric traits and constraints. Consider also taking dependencies on these
 crates as needed.
 
-```toml
+```toml linenums="1"
 [dependencies]
 decorum = "^0.1.1"
 nalgebra = "^0.18.0"
@@ -45,7 +45,7 @@ features](https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-s
 to enable additional functionality and integrations. To configure features,
 specify a dependency on Plexus in `Cargo.toml` as seen below.
 
-```toml
+```toml linenums="1"
 [dependencies]
 nalgebra = "^0.18.0"
 
@@ -89,7 +89,7 @@ Plexus exposes functionality via traits with blanket implementations. It can
 sometimes be cumbersome to import these traits, so it is recommended to import
 the contents of the `prelude` module.
 
-```rust
+```rust linenums="1"
 use plexus::prelude::*;
 ```
 
@@ -97,7 +97,7 @@ The `prelude` module re-exports commonly used traits. In particular, it
 re-exports traits used by iterator expressions that process streams of
 topological and geometric data.
 
-```rust
+```rust linenums="1"
 use decorum::N64;
 use nalgebra::Point3;
 use plexus::index::{Flat3, HashIndexer};

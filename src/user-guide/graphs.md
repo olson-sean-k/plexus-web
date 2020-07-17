@@ -13,7 +13,7 @@ buffers](../buffers), [iterator expressions](../generators), and incremental
 builders.
 
 === "Raw Buffers"
-    ```rust
+    ```rust linenums="1"
     // Create a graph of a two-dimensional quadrilateral from raw buffers.
     let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
         vec![Tetragon::new(0usize, 1, 2, 3)],
@@ -22,11 +22,32 @@ builders.
     .unwrap();
     ```
 === "Iterator Expression"
-    ```rust
+    ```rust linenums="1"
     // Create a graph with positional data from a unit cube.
     let mut graph: MeshGraph<Point3<R64>> = Cube::new()
         .polygons::<Position<Point3<R64>>>()
         .collect();
+    ```
+=== "Builder"
+    ```rust linenums="1"
+    fn trigon<B, T>(points: [T; 3]) -> Result<B, B::Error>
+    where
+        B: Buildable,
+        B::Vertex: FromGeometry<T>,
+    {
+        let mut builder = B::builder();
+        builder.surface_with(|builder| {
+            let [a, b, c] = points;
+            let a = builder.insert_vertex(a)?;
+            let b = builder.insert_vertex(b)?;
+            let c = builder.insert_vertex(c)?;
+            builder.facets_with(|builder| builder.insert_facet(&[a, b, c], B::Facet::default()))
+        })?;
+        builder.build()
+    }
+
+    // Create a graph of a two-dimensional triangle.
+    let graph: MeshGraph<Point2<f64>> = trigon([(0.0, 0.0), (0.0, 1.0), (1.0, 1.0)]).unwrap();
     ```
 
 ## Representation
@@ -98,7 +119,7 @@ used to refer to an entity.
 geometry in a graph. This type must implement the `GraphGeometry` trait, which
 specifies which types are used for geometry in vertices, arcs, edges, and faces.
 
-```rust
+```rust linenums="1"
 pub struct Vertex {
     pub position: Point3<R64>,
     pub normal: Vector3<R64>,
@@ -150,7 +171,7 @@ references: immutable views cannot mutate a graph and are not exclusive while
 mutable views may mutate both the geometry and topology of a graph but are
 exclusive. This example uses a view to traverse a graph:
 
-```rust
+```rust linenums="1"
 type E3 = Point3<R64>;
 
 // Create a graph with positional and normal data from a unit cube.
@@ -181,10 +202,12 @@ graph in any way. These views are most useful for modifying the geometry of a
 graph and, unlike mutable views, are not exclusive. Iterators over topological
 structures in a graph sometimes emit orphan views.
 
-```rust
+```rust linenums="1"
+type E3 = Point3<f64>;
+
 // Create a graph with positional data from a UV-sphere.
-let mut graph: MeshGraph<Point3<f64>> = UvSphere::new(8, 8)
-    .polygons::<Position<Point3<f64>>>()
+let mut graph: MeshGraph<E3> = UvSphere::new(8, 8)
+    .polygons::<Position<E3>>()
     .collect_with_indexer(LruIndexer::default());
 
 // Scale the position data in all vertices.
@@ -237,7 +260,7 @@ For example, rebinding can be used for fallible traversals that maintain
 mutability. A mutable view can be used to look up a key and, if such a key is
 found, be rebound into that topology.
 
-```rust
+```rust linenums="1"
 let face = graph.face_mut(key).unwrap();
 // Find a face along a boundary. If no such face is found, continue to use the
 // initiating face.
@@ -278,7 +301,7 @@ accessors borrow a view and use that borrow to produce another view. Accessors
 only expose immutable views with a limited lifetime while conversions expose
 views with the same lifetime and mutability as the source view.
 
-```rust
+```rust linenums="1"
 // Get a mutable view of a vertex in a graph.
 let vertex = graph.vertex_mut(key).unwrap();
 
@@ -305,7 +328,7 @@ repeated `to_ref` calls.
 For some entities with a notion of adjacency, it is possible to query the
 shortest path between two such entities, such as vertices.
 
-```rust
+```rust linenums="1"
 // Gets a `Path` from this vertex to the vertex with the given key.
 let path = vertex.into_shortest_path(key).unwrap();
 ```
@@ -313,10 +336,10 @@ let path = vertex.into_shortest_path(key).unwrap();
 It's also possible to use a custom metric. For example, rather than a logical
 distance between vertices, the Euclidean distance between vertices can be used.
 
-```rust
-let path = vertex.into_shortest_path_with(key, |a, b| {
-    // Compute the Euclidean distance between the vertices `a` and `b`.
-    R64::from((b.position() - a.position()).magnitude())
+```rust linenums="1"
+let path = vertex.into_shortest_path_with(key, |from, to| {
+    // Compute the Euclidean distance between the vertices `from` and `to`.
+    (to.position() - from.position()).magnitude()
 }).unwrap();
 ```
 
@@ -331,7 +354,7 @@ vertex yields all faces that share that vertex, in order.
     the entire graph. Use search traversals to examine all entities in a
     topologically connected group.
 
-```rust
+```rust linenums="1"
 for face in vertex.adjacent_faces() {
     for arc in face.interior_arcs() {
         // ...
@@ -344,7 +367,7 @@ arc](../graphs/#representation) and then traverse topology in a deterministic
 order from that arc. Because mutability requires orphan views, only the geometry
 of adjacent entities can be mutated using circulators.
 
-```rust
+```rust linenums="1"
 for mut face in vertex.adjacent_face_orphans() {
     face.geometry = Color4::white();
 }
@@ -354,7 +377,7 @@ _Search traversals_ visit all connected entities with some notion of adjacency.
 Both vertices and faces can be traversed in this way to perform searches using
 breadth- and depth-first ordering.
 
-```rust
+```rust linenums="1"
 if let Some(vertex) = vertex
     .traverse_by_depth()
     .find(|vertex| vertex.geometry == target)
@@ -374,7 +397,7 @@ if let Some(vertex) = vertex
 deterministic ordering. These categorical iterators are always exhaustive, and
 visit all topological structures in a graph regardless of their connectivity.
 
-```rust
+```rust linenums="1"
 let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
     PositionEncoding::default(),
     File::open("flower.ply").unwrap(),
@@ -392,10 +415,12 @@ views require exclusive access. To mutate topology using multiple mutable views,
 use an immutable circulator to collect the keys of the target topology and then
 lookup each mutable view using those keys.
 
-```rust
+```rust linenums="1"
+type E3 = Point3<R64>;
+
 // Create a graph with positional data from a unit cube.
-let mut graph: MeshGraph<Point3<R64>> = Cube::new()
-    .polygons::<Position<Point3<R64>>>()
+let mut graph: MeshGraph<E3> = Cube::new()
+    .polygons::<Position<E3>>()
     .collect();
 
 // Collect the keys of the faces in the graph.
@@ -428,7 +453,7 @@ an arc $\overrightarrow{AB}$ returns a vertex $M$ that subdivides the composite
 edge. The leading arc of $M$ is $\overrightarrow{MB}$ and is a part of the same
 ring as the initiating arc.
 
-```rust
+```rust linenums="1"
 let vertex = arc.split_at_midpoint(); // Consumes `arc`. `vertex` is mutable.
 ```
 
@@ -436,7 +461,7 @@ It is possible to downgrade mutable views into immutable views using `into_ref`.
 This can be useful when performing topological mutations, as it allows for any
 number of traversals immediately after the mutation is performed.
 
-```rust
+```rust linenums="1"
 // Split an arc and use `into_ref` to get an immutable view.
 let vertex = arc.split_at_midpoint().into_ref();
 
@@ -451,7 +476,7 @@ let span = (source, destination);
 
 Graphs also provide topological mutations that may operate over an entire graph.
 
-```rust
+```rust linenums="1"
 type E3 = Point3<R64>;
 
 let cube = Cube::new();
@@ -467,7 +492,7 @@ graph.triangulate(); // Triangulates all faces in the graph.
 Graphs may contain _disjoint sub-graphs_, which are topological groups that
 cannot reach each other. It is possible to split a graph into sub-graphs.
 
-```rust
+```rust linenums="1"
 // Create a graph of two squares sharing a single edge.
 let mut graph = MeshGraph::<Point2<f64>>::from_raw_buffers(
     vec![Tetragon::new(0usize, 1, 2, 3), Tetragon::new(0, 3, 4, 5)],
@@ -491,7 +516,7 @@ let key = graph
 let path = graph.edge_mut(key).unwrap().into_arc().into_path();
 
 // Split the graph into two disjoint sub-graphs.
-let _ = MeshGraph::split_at_path(path).unwrap();
+MeshGraph::split_at_path(path).unwrap();
 let graphs = graph.into_disjoint_subgraphs();
 ```
 
@@ -500,7 +525,7 @@ geometric traits, such as `split_at_midpoint`. Views also expose purely
 topological functions, which can always be used (even if the geometry is
 non-spatial).
 
-```rust
+```rust linenums="1"
 pub enum Weight {}
 
 impl GraphGeometry for Weight {
@@ -528,7 +553,7 @@ topological mutations as well, such as `poke_with`.
 When graph geometry implements geometric traits, views expose methods to compute
 related attributes like normals and centroids.
 
-```rust
+```rust linenums="1"
 let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
     PositionEncoding::default(),
     File::open("teapot.ply").unwrap(),
@@ -544,10 +569,12 @@ also possible to include these attributes in the geometry (payload) of a graph
 and assign arbitrary values as needed. For example, it is sometimes desirable to
 establish vertex normals independently of surrounding face or edge geometry.
 
-```rust
+```rust linenums="1"
+type E3 = Point3<R64>;
+
 pub struct Vertex {
-    pub position: Point3<R64>,
-    pub normal: Vector3<R64>,
+    pub position: E3
+    pub normal: Unit<Vector<E3>>,
 }
 
 impl GraphGeometry for Vertex {
@@ -558,7 +585,7 @@ impl GraphGeometry for Vertex {
 }
 
 let mut graph: MeshGraph<Vertex> = Cube::new()
-    .polygons::<Position<Point3<R64>>>()
+    .polygons::<Position<E3>>()
     .map_vertices(|position| Vertex {
         position,
         normal: Unit::x(),
@@ -582,7 +609,7 @@ The `graph` module provides traits that express the geometric capabilities of a
 geometric operations, such as computing edge midpoints. This example subdivides
 a face in a mesh by splitting arcs at their midpoints:
 
-```rust
+```rust linenums="1"
 pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>>) -> FaceView<&mut MeshGraph<G>>
 where
     G: EdgeMidpoint + GraphGeometry,
@@ -615,7 +642,7 @@ possible to express type bounds directly using traits from the
 The following example expresses type bounds for a function that computes the
 area of faces in two-dimensional graphs:
 
-```rust
+```rust linenums="1"
 pub fn area<G>(face: FaceView<&MeshGraph<G>>) -> Scalar<VertexPosition<G>>
 where
     G: GraphGeometry,
