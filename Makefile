@@ -15,6 +15,8 @@ build:
 	mkdir -p $(OUT)
 	git rev-parse --short HEAD >$(OUT)/hash
 	git remote get-url --push origin >$(OUT)/origin
+	git config --get user.name >$(OUT)/name
+	git config --get user.email >$(OUT)/email
 	peru sync
 	mkdocs build
 	cargo +nightly doc \
@@ -37,6 +39,8 @@ publish: build upstream
 	cp -aT $(DOC) $$(cat $(OUT)/tmp)
 	# Create a repository and push a single commit to the `origin` remote.
 	git -C $$(cat $(OUT)/tmp) init
+	git -C $$(cat $(OUT)/tmp) config user.name "$$(cat $(OUT)/name)"
+	git -C $$(cat $(OUT)/tmp) config user.email "$$(cat $(OUT)/email)"
 	git -C $$(cat $(OUT)/tmp) checkout -b gh-pages
 	git -C $$(cat $(OUT)/tmp) remote add origin $$(cat $(OUT)/origin)
 	git -C $$(cat $(OUT)/tmp) add .
