@@ -10,9 +10,8 @@ repo_name: olson-sean-k/plexus
 edit_uri: ""
 
 nav:
-  - Home:
-    - About: index.md
-    - License: license.md
+  - Home: index.md
+  - License: license.md
   - User Guide:
     - Getting Started: user-guide/getting-started.md
     - Geometry: user-guide/geometry.md
@@ -23,17 +22,11 @@ nav:
     - Graphs: user-guide/graphs.md
   - Contributor Guide:
     - Getting Started: contributor-guide/getting-started.md
-  - API Documentation:
-    # List Plexus first so that the collapsed tab links to its documentation.
-    - plexus: rustdoc/plexus/index.html
-    - decorum: rustdoc/decorum/index.html
-    - theon: rustdoc/theon/index.html
+  - API Documentation: rustdoc/plexus/index.html
 
 theme:
   custom_dir: src/theme/
   favicon: img/favicon.ico
-  features:
-    - tabs
   name: material
   language: en
   logo: img/plexus-minimal.svg
