@@ -4,7 +4,7 @@ module and `MeshGraph` type. Graphs can store arbitrary geometric data
 associated with any topological structure. Unlike iterator expressions and
 buffers, graphs provide efficient traversals and complex manipulation of meshes.
 
-!!! note
+!!! note ""
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
     where _arc_ typically refers to a directed adjacency.
 
@@ -12,19 +12,22 @@ buffers, graphs provide efficient traversals and complex manipulation of meshes.
 buffers](../buffers), [iterator expressions](../generators), and incremental
 builders.
 
-```rust
-// Create a graph of a two-dimensional quadrilateral from raw buffers.
-let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
-    vec![Tetragon::new(0usize, 1, 2, 3)],
-    vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)],
-)
-.unwrap();
-
-// Create a graph with positional data from a unit cube.
-let mut graph: MeshGraph<Point3<R64>> = Cube::new()
-    .polygons::<Position<Point3<R64>>>()
-    .collect();
-```
+=== "Raw Buffers"
+    ```rust
+    // Create a graph of a two-dimensional quadrilateral from raw buffers.
+    let mut graph = MeshGraph::<Point2<R64>>::from_raw_buffers(
+        vec![Tetragon::new(0usize, 1, 2, 3)],
+        vec![(0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)],
+    )
+    .unwrap();
+    ```
+=== "Iterator Expression"
+    ```rust
+    // Create a graph with positional data from a unit cube.
+    let mut graph: MeshGraph<Point3<R64>> = Cube::new()
+        .polygons::<Position<Point3<R64>>>()
+        .collect();
+    ```
 
 ## Representation
 
@@ -76,7 +79,7 @@ traversals of topology. For example, it becomes trivial to find adjacent
 topologies, such as the faces that share a given vertex or the adjacent faces of
 a given face.
 
-!!! warning
+!!! warning ""
     The `MeshGraph` data structure has some limitations. With few exceptions,
     only [orientable](https://en.wikipedia.org/wiki/orientability) compact
     [manifolds](https://en.wikipedia.org/wiki/surface_(topology)) can be
@@ -111,7 +114,7 @@ impl GraphGeometry for Vertex {
 let mut graph = MeshGraph::<Vertex>::new();
 ```
 
-!!! note
+!!! note ""
     Most examples on this page use the `R64` type from the
     [`decorum`](https://crates.io/crates/decorum) crate and the `Point2` and
     `Point3` types from the [`nalgebra`](https://crates.io/crates/nalgebra)
@@ -147,7 +150,7 @@ references: immutable views cannot mutate a graph and are not exclusive while
 mutable views may mutate both the geometry and topology of a graph but are
 exclusive. This example uses a view to traverse a graph:
 
-```rust hl_lines="15 16 17 18 19 20"
+```rust
 type E3 = Point3<R64>;
 
 // Create a graph with positional and normal data from a unit cube.
@@ -178,7 +181,7 @@ graph in any way. These views are most useful for modifying the geometry of a
 graph and, unlike mutable views, are not exclusive. Iterators over topological
 structures in a graph sometimes emit orphan views.
 
-```rust hl_lines="7 8 9"
+```rust
 // Create a graph with positional data from a UV-sphere.
 let mut graph: MeshGraph<Point3<f64>> = UvSphere::new(8, 8)
     .polygons::<Position<Point3<f64>>>()
@@ -194,7 +197,7 @@ Immutable and mutable views are both represented by view types, such as
 `FaceView`. Orphan views are represented by orphan view types, such as
 `FaceOrphan`.
 
-## Interior Reborrows
+### Interior Reborrows
 
 Views associate a key with a reference to storage in order to expose an entity.
 Because views maintain these references internally and behave like Rust
@@ -216,13 +219,13 @@ reborrow could invalidate the originating view by performing topological
 mutations. Mutable reborrows are performed beneath safe APIs, such as those
 exposing iterators over orphan views that cannot perform topological mutations.
 
-!!! warning
+!!! warning ""
     The `into_ref` conversion is analogous to an immutable reborrow of a mutable
     `&mut` Rust reference. Importantly, the mutable source reference remains
     despite the reborrow and so it is not possible to obtain an additional
     mutable view after using `into_ref` until the originating view is dropped.
 
-## Rebinding
+### Rebinding
 
 Views pair a key with a reference to the underlying storage of a graph. A view
 _binds_ a key to some storage. Given a view, it is possible to _rebind_ the view
@@ -292,7 +295,7 @@ reborrow](../graphs/#interior-reborrows) before using a conversion. Accessors
 allow for more fluent sequences of function calls without the need to insert
 repeated `to_ref` calls.
 
-!!! note
+!!! note ""
     It is not possible to perform [topological
     mutations](../graphs/#topological-mutations) using a view obtained via a
     borrowing traversal, because these views are always
@@ -323,7 +326,7 @@ A _circulator_ is a type of iterator that provides a one-to-many traversal that
 examines immediately adjacent entities. For example, the face circulator of a
 vertex yields all faces that share that vertex, in order.
 
-!!! note
+!!! note ""
     Circlators only expose **immediately** adjacent entities and do not traverse
     the entire graph. Use search traversals to examine all entities in a
     topologically connected group.
@@ -360,7 +363,7 @@ if let Some(vertex) = vertex
 }
 ```
 
-!!! warning
+!!! warning ""
     It is possible for vertices and faces to be _disjoint_, meaning that they do
     not share a path with all other vertices or faces. Therefore, these
     traversals are only exhaustive with respect to the topologically connected
@@ -389,7 +392,7 @@ views require exclusive access. To mutate topology using multiple mutable views,
 use an immutable circulator to collect the keys of the target topology and then
 lookup each mutable view using those keys.
 
-```rust hl_lines="7 8 9 10"
+```rust
 // Create a graph with positional data from a unit cube.
 let mut graph: MeshGraph<Point3<R64>> = Cube::new()
     .polygons::<Position<Point3<R64>>>()
@@ -407,7 +410,7 @@ for key in keys {
 }
 ```
 
-!!! note
+!!! note ""
     Mutations may be _dependent_ and invalidate keys. Some mutations may not be
     able to operate on the given set of keys as trivially as seen in the example
     above. Poking a face is an independent mutation and does not affect other
@@ -433,7 +436,7 @@ It is possible to downgrade mutable views into immutable views using `into_ref`.
 This can be useful when performing topological mutations, as it allows for any
 number of traversals immediately after the mutation is performed.
 
-```rust hl_lines="2"
+```rust
 // Split an arc and use `into_ref` to get an immutable view.
 let vertex = arc.split_at_midpoint().into_ref();
 
@@ -448,7 +451,7 @@ let span = (source, destination);
 
 Graphs also provide topological mutations that may operate over an entire graph.
 
-```rust hl_lines="10"
+```rust
 type E3 = Point3<R64>;
 
 let cube = Cube::new();
@@ -497,7 +500,7 @@ geometric traits, such as `split_at_midpoint`. Views also expose purely
 topological functions, which can always be used (even if the geometry is
 non-spatial).
 
-```rust hl_lines="16"
+```rust
 pub enum Weight {}
 
 impl GraphGeometry for Weight {
@@ -579,7 +582,7 @@ The `graph` module provides traits that express the geometric capabilities of a
 geometric operations, such as computing edge midpoints. This example subdivides
 a face in a mesh by splitting arcs at their midpoints:
 
-```rust hl_lines="3 4"
+```rust
 pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>>) -> FaceView<&mut MeshGraph<G>>
 where
     G: EdgeMidpoint + GraphGeometry,
@@ -612,7 +615,7 @@ possible to express type bounds directly using traits from the
 The following example expresses type bounds for a function that computes the
 area of faces in two-dimensional graphs:
 
-```rust hl_lines="4 5"
+```rust
 pub fn area<G>(face: FaceView<&MeshGraph<G>>) -> Scalar<VertexPosition<G>>
 where
     G: GraphGeometry,

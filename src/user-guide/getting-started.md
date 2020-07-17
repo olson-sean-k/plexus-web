@@ -97,7 +97,7 @@ The `prelude` module re-exports commonly used traits. In particular, it
 re-exports traits used by iterator expressions that process streams of
 topological and geometric data.
 
-```rust hl_lines="4"
+```rust
 use decorum::N64;
 use nalgebra::Point3;
 use plexus::index::{Flat3, HashIndexer};
@@ -112,6 +112,6 @@ let (indices, vertices) = Cube::new()
     .index_vertices::<Flat3, _>(HashIndexer::default());
 ```
 
-!!! note
+!!! note ""
     Most code examples in the user guide do not include imports. See the [API
     documentation](../rustdoc/plexus/index.html) for import paths.

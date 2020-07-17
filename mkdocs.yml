@@ -38,6 +38,7 @@ theme:
   language: en
   logo: img/plexus-minimal.svg
   palette:
+    scheme: slate
     primary: pink
     accent: light blue
 
@@ -46,6 +47,9 @@ markdown_extensions:
   - codehilite:
       linenums: true
   - pymdownx.arithmatex
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed
   - toc:
       permalink: true
 
@@ -53,6 +57,8 @@ plugins:
   - search:
       lang:
         - en
+  - minify:
+      minify_html: true
 
 extra:
   # TODO: Enable when the site is ready.
