@@ -112,6 +112,6 @@ let (indices, vertices) = Cube::new()
     .index_vertices::<Flat3, _>(HashIndexer::default());
 ```
 
-!!! note ""
+!!! note
     Most code examples in the user guide do not include imports. See the [API
     documentation](../rustdoc/plexus/index.html) for import paths.

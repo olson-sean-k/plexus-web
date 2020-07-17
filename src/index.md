@@ -10,7 +10,7 @@ over their [geometry](user-guide/geometry). Plexus supports types from the
 [`mint`](https://crates.io/crates/mint), and
 [`nalgebra`](https://crates.io/crates/nalgebra) crates.
 
-!!! warning ""
+!!! warning
     Plexus is still in its initial development phase. Crates published to
     [https://crates.io](https://crates.io) in the `0.0.x` series do **not** obey
     [SemVer](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html)

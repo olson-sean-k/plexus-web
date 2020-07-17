@@ -4,7 +4,7 @@ module and `MeshGraph` type. Graphs can store arbitrary geometric data
 associated with any topological structure. Unlike iterator expressions and
 buffers, graphs provide efficient traversals and complex manipulation of meshes.
 
-!!! note ""
+!!! note
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
     where _arc_ typically refers to a directed adjacency.
 
@@ -100,7 +100,7 @@ traversals of topology. For example, it becomes trivial to find adjacent
 topologies, such as the faces that share a given vertex or the adjacent faces of
 a given face.
 
-!!! warning ""
+!!! warning
     The `MeshGraph` data structure has some limitations. With few exceptions,
     only [orientable](https://en.wikipedia.org/wiki/orientability) compact
     [manifolds](https://en.wikipedia.org/wiki/surface_(topology)) can be
@@ -135,7 +135,7 @@ impl GraphGeometry for Vertex {
 let mut graph = MeshGraph::<Vertex>::new();
 ```
 
-!!! note ""
+!!! note
     Most examples on this page use the `R64` type from the
     [`decorum`](https://crates.io/crates/decorum) crate and the `Point2` and
     `Point3` types from the [`nalgebra`](https://crates.io/crates/nalgebra)
@@ -242,7 +242,7 @@ reborrow could invalidate the originating view by performing topological
 mutations. Mutable reborrows are performed beneath safe APIs, such as those
 exposing iterators over orphan views that cannot perform topological mutations.
 
-!!! warning ""
+!!! warning
     The `into_ref` conversion is analogous to an immutable reborrow of a mutable
     `&mut` Rust reference. Importantly, the mutable source reference remains
     despite the reborrow and so it is not possible to obtain an additional
@@ -318,7 +318,7 @@ reborrow](../graphs/#interior-reborrows) before using a conversion. Accessors
 allow for more fluent sequences of function calls without the need to insert
 repeated `to_ref` calls.
 
-!!! note ""
+!!! note
     It is not possible to perform [topological
     mutations](../graphs/#topological-mutations) using a view obtained via a
     borrowing traversal, because these views are always
@@ -349,7 +349,7 @@ A _circulator_ is a type of iterator that provides a one-to-many traversal that
 examines immediately adjacent entities. For example, the face circulator of a
 vertex yields all faces that share that vertex, in order.
 
-!!! note ""
+!!! note
     Circlators only expose **immediately** adjacent entities and do not traverse
     the entire graph. Use search traversals to examine all entities in a
     topologically connected group.
@@ -386,7 +386,7 @@ if let Some(vertex) = vertex
 }
 ```
 
-!!! warning ""
+!!! warning
     It is possible for vertices and faces to be _disjoint_, meaning that they do
     not share a path with all other vertices or faces. Therefore, these
     traversals are only exhaustive with respect to the topologically connected
@@ -435,7 +435,7 @@ for key in keys {
 }
 ```
 
-!!! note ""
+!!! note
     Mutations may be _dependent_ and invalidate keys. Some mutations may not be
     able to operate on the given set of keys as trivially as seen in the example
     above. Poking a face is an independent mutation and does not affect other

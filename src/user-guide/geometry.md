@@ -8,7 +8,7 @@ types used to represent geometry. For example, computing the normals of faces in
 a graph or subdividing polygons in an iterator expression can be done easily if
 these traits are implemented.
 
-!!! note ""
+!!! note
     Enabling [geometry Cargo features](../getting-started/#cargo-features)
     provides implementations of these traits for types from commonly used crates
     like [`nalgebra`](https://crates.io/crates/nalgebra). It is highly
