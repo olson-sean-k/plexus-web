@@ -277,7 +277,7 @@ let mut face = {
     let key = face
         .traverse_by_depth()
         .find(|face| {
-            face.interior_arcs()
+            face.adjacent_arcs()
                 .map(|arc| arc.into_opposite_arc())
                 .any(|arc| arc.is_boundary_arc())
         })
@@ -365,7 +365,7 @@ vertex yields all faces that share that vertex, in order.
 
 ```rust linenums="1"
 for face in vertex.adjacent_faces() {
-    for arc in face.interior_arcs() {
+    for arc in face.adjacent_arcs() {
         // ...
     }
 }
