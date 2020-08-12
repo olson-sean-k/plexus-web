@@ -32,7 +32,7 @@ build:
 	# Patch the API documentation.
 	./patch.sh
 	# Copy configuration into the output.
-	cp .gitignore CNAME $(DOC)
+	cp CNAME $(DOC)
 
 publish: build upstream
 	# Create a temporary directory.
