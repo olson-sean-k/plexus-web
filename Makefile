@@ -29,6 +29,8 @@ build:
 	# Replace any previous builds of the API documentation.
 	rm -rf $(DOC)/rustdoc
 	cp -a $(LIB)/target/doc $(DOC)/rustdoc
+	# Patch the API documentation.
+	./patch.sh
 	# Copy configuration into the output.
 	cp .gitignore CNAME $(DOC)
 
