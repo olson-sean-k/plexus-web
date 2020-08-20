@@ -10,7 +10,7 @@ bash_source_dir=$(dirname "$BASH_SOURCE")
 
 root="${1:-$bash_source_dir}"
 patch="$root/patch"
-doc="$root/out/doc/rustdoc"
+doc="$root/out/site/rustdoc"
 
 # Append CSS to remove drop shadows from logo images.
 for theme in "ayu.css" "dark.css" "light.css"

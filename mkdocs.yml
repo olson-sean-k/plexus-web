@@ -1,5 +1,5 @@
 docs_dir: src/
-site_dir: out/doc/
+site_dir: out/site/
 
 site_name: Plexus
 site_author: Sean Olson

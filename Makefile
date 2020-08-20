@@ -3,7 +3,7 @@ SHELL:=/usr/bin/env bash
 
 OUT:=./out
 LIB:=$(OUT)/lib
-DOC:=$(OUT)/doc
+SITE:=$(OUT)/site
 
 # TODO: It is not yet possible to use Cargo configuration to embed HTML headers
 #       in documentation. Use the absolute path to the headers included with
@@ -27,18 +27,18 @@ build:
 		--all-features \
 		--manifest-path=$(LIB)/Cargo.toml
 	# Replace any previous builds of the API documentation.
-	rm -rf $(DOC)/rustdoc
-	cp -a $(LIB)/target/doc $(DOC)/rustdoc
+	rm -rf $(SITE)/rustdoc
+	cp -a $(LIB)/target/doc $(SITE)/rustdoc
 	# Patch the API documentation.
 	./patch.sh
 	# Copy configuration into the output.
-	cp CNAME $(DOC)
+	cp CNAME $(SITE)
 
 publish: build upstream
 	# Create a temporary directory.
 	mktemp --tmpdir -d tmp.plexus-web.XXXX >$(OUT)/tmp
 	# Copy the build artifacts into the temporary directory.
-	cp -aT $(DOC) $$(cat $(OUT)/tmp)
+	cp -aT $(SITE) $$(cat $(OUT)/tmp)
 	# Create a repository and push a single commit to the `origin` remote.
 	git -C $$(cat $(OUT)/tmp) init
 	git -C $$(cat $(OUT)/tmp) config user.name "$$(cat $(OUT)/name)"
