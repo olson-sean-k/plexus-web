@@ -1,32 +1,42 @@
-Plexus uses [`theon`](https://crates.io/crates/theon) to abstract [Euclidean
-spaces](https://en.wikipedia.org/wiki/euclidean_space) and support various types
-in the Rust ecosystem. `theon` provides traits used to support spatial queries
-and operations in [iterator expressions](../generators) and [graphs](../graphs).
+Plexus uses the [`theon`] crate to abstract [Euclidean spaces][space] and
+support various types in the Rust ecosystem. [`theon`] provides types and traits
+used to implement linear algebra and computational geometry without forcing
+dependent crates to use specific crates and types.
 
-While geometric traits are not required, it is recommended to implement them for
-types used to represent geometry. For example, computing the normals of faces in
-a graph or subdividing polygons in an iterator expression can be done easily if
-these traits are implemented.
+Mesh data structures like buffers and [graphs](../graphs) can contain arbitrary
+data, including non-geometric data and no data at all. Geometric traits are not
+required, but it is recommended to use supported types when representing
+geometric data. For example, computing the normals of faces in a
+[graph](../graphs) or subdividing polygons in an iterator expression can be done
+easily if these traits are implemented.
 
 !!! note
-    Enabling [geometry Cargo features](../getting-started/#cargo-features)
+    Enabling [geometry Cargo features](../getting-started/#integrations)
     provides implementations of these traits for types from commonly used crates
-    like [`nalgebra`](https://crates.io/crates/nalgebra). It is highly
-    recommended to enable these features.
+    like [`cgmath`] and [`nalgebra`]. It is highly recommended to enable these
+    features when using these crates.
 
 ## Conversions
 
 Plexus provides conversions for geometric types to enable more ergonomic and
 flexible APIs. The `FromGeometry` and `IntoGeometry` traits are analogous to the
 standard `From` and `Into` traits and perform a similar function, but are used
-exclusively for geometric types.
+for geometric types and allow Plexus to provide implementations for conversion
+that would violate coherence rules using `From` and `Into`.
 
 Conversions are optionally implemented via [geometry Cargo
-features](../getting-started/#cargo-features) and include support for proxy
-types from the [`decorum`](https://crates.io/crates/decorum) crate.
+features](../getting-started/#integrations) and include support scalar
+conversions of proxy types from the [`decorum`] crate.
 
-The `AsPosition` trait is re-exported from `theon` and allows vertex data to
-expose positional data. When this positional data implements geometric traits,
-spatial operations become available. For example, this allows graphs to support
-splitting composite edges at midpoints, extruding faces, and flattening faces to
-a best-fit plane.
+The `AsPosition` trait is re-exported from [`theon`] in the `geometry` module
+and allows types to expose positional data. When this positional data implements
+the appropriate traits, geometric APIs can be used. For example, this allows
+[graphs](../graphs) to support splitting edges at midpoints, extruding faces
+along translation vectors, and flattening faces into a best-fit plane.
+
+[space]: https://en.wikipedia.org/wiki/euclidean_space
+
+[`cgmath`]: https://crates.io/crates/cgmath
+[`decorum`]: https://crates.io/crates/decorum
+[`nalgebra`]: https://crates.io/crates/nalgebra
+[`theon`]: https://crates.io/crates/theon
