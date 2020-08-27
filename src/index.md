@@ -31,4 +31,4 @@ these changes may differ significantly from crates published to registries like
 versions of Plexus.
 
 For contributing changes to Plexus, see the [contributor
-guide](contributor-guide/getting-started.md).
+guide](contributor-guide/tools-and-hosting.md).

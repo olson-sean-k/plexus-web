@@ -21,7 +21,7 @@ nav:
     - Buffers: user-guide/buffers.md
     - Graphs: user-guide/graphs.md
   - Contributor Guide:
-    - Getting Started: contributor-guide/getting-started.md
+    - Tools and Hosting: contributor-guide/tools-and-hosting.md
   - API Documentation: rustdoc/plexus/index.html
 
 theme:
