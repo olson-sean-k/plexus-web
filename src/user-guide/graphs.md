@@ -1,16 +1,15 @@
 Plexus provides a flexible representation of meshes as a [half-edge
 graph](https://en.wikipedia.org/wiki/doubly_connected_edge_list) via the `graph`
-module and `MeshGraph` type. Graphs can store arbitrary geometric data
-associated with any topological structure. Unlike iterator expressions and
-buffers, graphs provide efficient traversals and complex manipulation of meshes.
+module and `MeshGraph` type. Graphs can store arbitrary data associated with any
+topological structure. Unlike iterator expressions and buffers, graphs provide
+efficient traversals and complex manipulation of meshes.
 
 !!! note
     Plexus refers to _half-edges_ as _arcs_. This borrows from graph theory,
     where _arc_ typically refers to a directed adjacency.
 
-`MeshGraph`s can be created in various ways, including from [raw
-buffers](../buffers), [iterator expressions](../generators), incremental
-builders, and encodings.
+`MeshGraph`s can be created in various ways, including from raw buffers,
+iterator expressions, incremental builders, and encodings.
 
 === "Raw Buffers"
     ```rust linenums="1"
@@ -122,11 +121,12 @@ a given face.
 into storage. Keys are exposed as strongly typed and opaque values, which can be
 used to refer to an entity.
 
-## Geometry
+## Data and Geometry
 
-`MeshGraph` exposes a type parameter that determines the representation of
-geometry in a graph. This type must implement the `GraphGeometry` trait, which
-specifies which types are used for geometry in vertices, arcs, edges, and faces.
+`MeshGraph` accepts a single type parameter that determines the types of data
+associated with entities (vertices, arcs, edges, and faces) in the graph. This
+type must implement the `GraphData` trait, which provides an associated type for
+each entity.
 
 ```rust linenums="1"
 pub struct Vertex {
@@ -134,7 +134,7 @@ pub struct Vertex {
     pub normal: Vector3<R64>,
 }
 
-impl GraphGeometry for Vertex {
+impl GraphData for Vertex {
     type Vertex = Self;
     type Arc = ();
     type Edge = ();
@@ -145,27 +145,25 @@ let mut graph = MeshGraph::<Vertex>::new();
 ```
 
 !!! note
-    Most examples on this page use the `R64` type from the
-    [`decorum`](https://crates.io/crates/decorum) crate and the `Point2` and
-    `Point3` types from the [`nalgebra`](https://crates.io/crates/nalgebra)
-    crate for graph geometry. When the `geometry-nalgebra` feature is enabled,
-    these types implement `GraphGeometry`.
+    Most examples on this page use the `R64` type from the [`decorum`] crate and
+    the `Point2` and `Point3` types from the [`nalgebra`] crate for graph data.
+    When the `geometry-nalgebra` feature is enabled, these types implement
+    `GraphData`.
 
-The associated types specified by a `GraphGeometry` implementation determine the
-type of the `geometry` field exposed by [views](../graphs/#views). When set to
-`()`, no geometry is present.
-
-`MeshGraph` is agnostic to geometry and any types satisfying the bounds on
-`GraphGeometry`'s associated types (namely `Copy` and `Default`) may be used.
-However, if vertex geometry exposes some notion of positional data via the
-`AsPosition` trait, then geometric features become available. Read more about
+The associated types specified by a `GraphData` implementation determine the
+type exposed by the `get` and `get_mut` functions of [views](../graphs/#views).
+`MeshGraph` is agnostic to its data and geometry and any types satisfying the
+bounds on `GraphData`'s associated types (namely `Copy` and `Default`) may be
+used, including the unit type `()` when no data is required.  However, if the
+`Vertex` type exposes some notion of positional data via the `AsPosition` trait,
+then geometric features become available `MeshGraph` APIs. Read more about
 geometric traits and spatial operations [here](../geometry).
 
 ## Views
 
 `MeshGraph`s expose _views_ over their entities (vertices, arcs, edges, and
 faces). Views are obtained using keys or iteration and provide the primary API
-for interacting with a `MeshGraph`'s topology and geometry. A view is a kind of
+for interacting with a `MeshGraph`'s topology and data. A view is a kind of
 "smart pointer" to an entity in a graph. There are three types of views
 summarized below:
 
@@ -177,7 +175,7 @@ summarized below:
 
 _Immutable_ and _mutable views_ behave similarly to Rust's `&` and `&mut`
 references: immutable views cannot mutate a graph and are not exclusive while
-mutable views may mutate both the geometry and topology of a graph but are
+mutable views may mutate both the data and topology of a graph but are
 exclusive. This example uses a view to traverse a graph:
 
 ```rust linenums="1"
@@ -204,12 +202,12 @@ let opposite = face
     .expect("cube");
 ```
 
-_Orphan views_ are similar to mutable views in that they may mutate the geometry
-of a graph, but they do not have access to the topology of a graph. Because they
-do not know about other vertices, arcs, etc., orphan views cannot traverse a
-graph in any way. These views are most useful for modifying the geometry of a
-graph and, unlike mutable views, are not exclusive. Iterators over topological
-structures in a graph sometimes emit orphan views.
+_Orphan views_ are similar to mutable views in that they may mutate the data of
+a graph, but they do not have access to the topology of a graph. Because they do
+not know about other vertices, arcs, etc., orphan views cannot traverse a graph
+in any way. These views are most useful for modifying the data and geometry of a
+graph and, unlike mutable views, are not exclusive. As such, iterators over
+topological structures in a graph sometimes emit orphan views.
 
 ```rust linenums="1"
 type E3 = Point3<f64>;
@@ -221,13 +219,16 @@ let mut graph: MeshGraph<E3> = UvSphere::new(8, 8)
 
 // Scale the position data in all vertices.
 for mut vertex in graph.vertex_orphans() {
-    vertex.geometry *= 2.0;
+    *vertex.get_mut() *= 2.0;
 }
 ```
 
 Immutable and mutable views are both represented by view types, such as
 `FaceView`. Orphan views are represented by orphan view types, such as
 `FaceOrphan`.
+
+Views provide access to data in a graph via `get` and `get_mut` methods. These
+methods return references to the data described by the `GraphData` trait.
 
 ### Interior Reborrows
 
@@ -373,12 +374,12 @@ for face in vertex.adjacent_faces() {
 
 Circulators generally begin iteration from a [leading
 arc](../graphs/#representation) and then traverse topology in a deterministic
-order from that arc. Because mutability requires orphan views, only the geometry
-of adjacent entities can be mutated using circulators.
+order from that arc. Because mutability requires orphan views, only the data of
+adjacent entities can be mutated using circulators.
 
 ```rust linenums="1"
 for mut face in vertex.adjacent_face_orphans() {
-    face.geometry = Color4::white();
+    *face.get_mut() = Color4::white();
 }
 ```
 
@@ -389,7 +390,7 @@ breadth- and depth-first ordering.
 ```rust linenums="1"
 if let Some(vertex) = vertex
     .traverse_by_depth()
-    .find(|vertex| vertex.geometry == target)
+    .find(|vertex| vertex.get() == target)
 {
     // ...
 }
@@ -415,7 +416,7 @@ let (graph, _) = MeshGraph::<Point3<f64>>::from_ply(
 
 // Modify the geometry of every vertex.
 for mut vertex in graph.vertex_orphans() {
-    vertex.geometry *= 2.0;
+    *vertex.get_mut() *= 2.0;
 }
 ```
 
@@ -531,13 +532,13 @@ let graphs = graph.into_disjoint_subgraphs();
 
 Topological mutations expose spatial functions for types that implement
 geometric traits, such as `split_at_midpoint`. Views also expose purely
-topological functions, which can always be used (even if the geometry is
-non-spatial).
+topological functions, which can always be used (if, for example, the data in a
+graph is non-spatial).
 
 ```rust linenums="1"
 pub enum Weight {}
 
-impl GraphGeometry for Weight {
+impl GraphData for Weight {
     type Vertex = f64;
     type Arc = ();
     type Edge = ();
@@ -553,13 +554,13 @@ let key = graph.arcs().nth(0).expect("triangle").key();
 let vertex = graph.arc_mut(key).unwrap().split_with(|| 0.1);
 ```
 
-In the above example, `split_with` accepts a function that returns geometry for
-the subdividing vertex of the split. Similar functions exist for other
-topological mutations as well, such as `poke_with`.
+In the above example, `split_with` accepts a function that returns data for the
+subdividing vertex of the split. Similar functions exist for other topological
+mutations as well, such as `poke_with`.
 
 ## Computation vs. Payload
 
-When graph geometry implements geometric traits, views expose methods to compute
+When graph data implements geometric traits, views expose methods to compute
 related attributes like normals and centroids.
 
 ```rust linenums="1"
@@ -574,9 +575,9 @@ let centroid = graph.faces().nth(0).unwrap().centroid();
 ```
 
 These computations are based on the positional data in vertices. However, it is
-also possible to include these attributes in the geometry (payload) of a graph
-and assign arbitrary values as needed. For example, it is sometimes desirable to
-establish vertex normals independently of surrounding face or edge geometry.
+also possible to include these attributes in the data of a graph and assign
+arbitrary values as needed. For example, it is sometimes desirable to establish
+vertex normals independently of surrounding face or edge geometry.
 
 ```rust linenums="1"
 type E3 = Point3<R64>;
@@ -586,7 +587,7 @@ pub struct Vertex {
     pub normal: Unit<Vector<E3>>,
 }
 
-impl GraphGeometry for Vertex {
+impl GraphData for Vertex {
     type Vertex = Self;
     type Arc = ();
     type Edge = ();
@@ -603,7 +604,7 @@ let mut graph: MeshGraph<Vertex> = Cube::new()
 
 // Write arbitrary data to the payload.
 let mut vertex = graph.vertex_orphans().nth(0).unwrap();
-vertex.geometry.normal = Unit::z();
+vertex.get_mut().normal = Unit::z();
 ```
 
 The above example uses the `Vertex` type to store a position and normal in each
@@ -619,34 +620,41 @@ geometric operations, such as computing edge midpoints. This example subdivides
 a face in a mesh by splitting arcs at their midpoints:
 
 ```rust linenums="1"
-pub fn circumscribe<G>(face: FaceView<&mut MeshGraph<G>>) -> FaceView<&mut MeshGraph<G>>
+pub trait Circumscribe<G> {
+    fn circumscribe(self) -> Self;
+}
+
+impl<'a, G> Circumscribe<G> for FaceView<&'a mut MeshGraph<G>>
 where
-    G: EdgeMidpoint + GraphGeometry,
-    G::Vertex: AsPosition,
+    G: EdgeMidpoint + GraphData,
+    G::Vertex: AsPositionMut,
 {
-    // Split each edge, stashing the vertex key and moving to the next arc.
-    let arity = face.arity();
-    let mut arc = face.into_arc();
-    let mut splits = SmallVec::<[_; 4]>::with_capacity(arity);
-    for _ in 0..arity {
-        let vertex = arc.split_at_midpoint();
-        splits.push(vertex.key());
-        arc = vertex.into_outgoing_arc().into_next_arc();
+    // Subdivide the face such that a similar polygon is formed within its
+    // perimeter.
+    fn circumscribe(self) -> Self {
+        // Split each edge, stashing the vertex key and moving to the next arc.
+        let arity = self.arity();
+        let mut arc = self.into_arc();
+        let mut splits = SmallVec::<[_; 4]>::with_capacity(arity);
+        for _ in 0..arity {
+            let vertex = arc.split_at_midpoint();
+            splits.push(vertex.key());
+            arc = vertex.into_outgoing_arc().into_next_arc();
+        }
+        // Split faces along the vertices from each arc split.
+        let mut face = arc.into_face().unwrap();
+        for (a, b) in splits.into_iter().perimeter() {
+            face = face.split(ByKey(a), ByKey(b)).unwrap().into_face().unwrap();
+        }
+        // Return the face forming the similar polygon.
+        face
     }
-    // Split faces along the vertices from each arc split.
-    let mut face = arc.into_face().unwrap();
-    for (a, b) in splits.into_iter().perimeter() {
-        face = face.split(ByKey(a), ByKey(b)).unwrap().into_face().unwrap();
-    }
-    // Return the terminating face of the decomposition.
-    face
 }
 ```
 
 These traits avoid the need to specify very complex type bounds, but it is also
-possible to express type bounds directly using traits from the
-[`decorum`](https://crates.io/crates/decorum) and
-[`theon`](https://crates.io/crates/theon) crates.
+possible to express type bounds directly using traits from the [`decorum`] and
+[`theon`] crates.
 
 The following example expresses type bounds for a function that computes the
 area of faces in two-dimensional graphs:
@@ -654,7 +662,7 @@ area of faces in two-dimensional graphs:
 ```rust linenums="1"
 pub fn area<G>(face: FaceView<&MeshGraph<G>>) -> Scalar<VertexPosition<G>>
 where
-    G: GraphGeometry,
+    G: GraphData,
     G::Vertex: AsPosition,
     VertexPosition<G>: EuclideanSpace + FiniteDimensional<N = U2>,
 {
@@ -669,3 +677,7 @@ converted into an arc that participates in its composite edge. Similarly, the
 `ToRing` trait is implemented by `FaceView` and `Ring` and allows either type to
 be converted into its associated ring. Geometric operation traits like
 `EdgeMidpoint` use these traits to accept related entities, for example.
+
+[`decorum`]: https://crates.io/crates/decorum
+[`nalgebra`]: https://crates.io/crates/nalgebra
+[`theon`]: https://crates.io/crates/theon
