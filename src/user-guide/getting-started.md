@@ -52,7 +52,7 @@ let (indices, vertices) = Cube::new()
 
 !!! note
     Most code examples in the user guide do not include imports. See the [API
-    documentation](../rustdoc/plexus/index.html) for import paths.
+    documentation][api] for import paths.
 
 ## Integrations
 
@@ -100,7 +100,7 @@ When using integrated crates, a direct dependency or an import from
 `integration` can be used. Using the `integration` module avoids version
 conflicts.
 
-```rust
+```rust linenums="1"
 // Import re-exported crates. No direct dependency is required.
 use plexus::integration::{decorum, nalgebra};
 
@@ -118,6 +118,7 @@ pub struct Vertex {
 }
 ```
 
+[api]: ../rustdoc/plexus/index.html
 [cargo-features]: https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section
 [repository]: https://github.com/olson-sean-k/plexus
 
