@@ -6,9 +6,9 @@ plexus = "=0.0.11" # Unstable. Require exact version.
 ```
 
 The documentation on this website is based on work on the [`master`
-branch][repository]. Because Plexus is in its initial development phase,
-published crates may differ significantly from what is documented here. Consider
-taking a dependency on a `master` revision.
+branch][repository]. **Because Plexus is in its initial development phase,
+published crates may differ significantly from what is documented here.**
+Consider taking a dependency on a `master` revision.
 
 ```toml linenums="1"
 [dependencies]
@@ -61,14 +61,16 @@ provide geometric traits that support various mathematics crates in the Rust
 ecosystem. Any mathematics crate can be used and, if it is supported by Theon,
 Plexus provides geometric APIs.
 
-Geometric traits are optionally implemented for types in the [`cgmath`],
-[`mint`], and [`nalgebra`] crates by enabling [Cargo features][cargo-features].
+Geometric traits are optionally implemented for types in various crates by
+enabling [Cargo features][cargo-features].
 
-| Feature             | Default | Crate        | Support  |
-|---------------------|---------|--------------|----------|
-| `geometry-cgmath`   | No      | [`cgmath`]   | Complete |
-| `geometry-mint`     | No      | [`mint`]     | Partial  |
-| `geometry-nalgebra` | No      | [`nalgebra`] | Complete |
+| Feature                | Default | Crate           | Support  |
+|------------------------|---------|-----------------|----------|
+| `geometry-cgmath`      | No      | [`cgmath`]      | Complete |
+| `geometry-glam`        | No      | [`glam`]        | Complete |
+| `geometry-mint`        | No      | [`mint`]        | Partial  |
+| `geometry-nalgebra`    | No      | [`nalgebra`]    | Complete |
+| `geometry-ultraviolet` | No      | [`ultraviolet`] | Partial  |
 
 If using one of these supported crates, it is highly recommended to enable the
 corresponding feature. To configure features, specify a dependency on Plexus in
@@ -98,11 +100,31 @@ When using integrated crates, a direct dependency or an import from
 `integration` can be used. Using the `integration` module avoids version
 conflicts.
 
+```rust
+// Import re-exported crates. No direct dependency is required.
+use plexus::integration::{decorum, nalgebra};
+
+use decorum::R64;
+use nalgebra::Point3;
+use plexus::geometry::Vector;
+use plexus::prelude::*;
+
+type E3 = Point3<R64>;
+
+#[derive(Clone, Copy, Eq, Hash, PartialEq)]
+pub struct Vertex {
+    pub position: E3,
+    pub normal: Vector<E3>,
+}
+```
+
 [cargo-features]: https://doc.rust-lang.org/cargo/reference/manifest.html#the-features-section
 [repository]: https://github.com/olson-sean-k/plexus
 
 [`cgmath`]: https://crates.io/crates/cgmath
 [`decorum`]: https://crates.io/crates/decorum
+[`glam`]: https://crates.io/crates/glam
 [`mint`]: https://crates.io/crates/mint
 [`nalgebra`]: https://crates.io/crates/nalgebra
 [`theon`]: https://crates.io/crates/theon
+[`ultraviolet`]: https://crates.io/crates/ultraviolet
