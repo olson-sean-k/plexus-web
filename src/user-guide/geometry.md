@@ -21,22 +21,24 @@ easily if these traits are implemented.
 Plexus provides conversions for geometric types to enable more ergonomic and
 flexible APIs. The `FromGeometry` and `IntoGeometry` traits are analogous to the
 standard `From` and `Into` traits and perform a similar function, but are used
-for geometric types and allow Plexus to provide implementations for conversion
+for geometric types and allow Plexus to provide implementations for conversions
 that would violate coherence rules using `From` and `Into`.
 
 Conversions are optionally implemented via [geometry Cargo
-features](../getting-started/#integrations) and include support scalar
-conversions of proxy types from the [`decorum`] crate.
+features](../getting-started/#integrations) and include support for implicit
+scalar conversions of types from the [`decorum`] crate.
 
 The `AsPosition` trait is re-exported from [`theon`] in the `geometry` module
 and allows types to expose positional data. When this positional data implements
 the appropriate traits, geometric APIs can be used. For example, this allows
 [graphs](../graphs) to support splitting edges at midpoints, extruding faces
-along translation vectors, and flattening faces into a best-fit plane.
+along translation vectors, and flattening faces into a best-fit plane regardless
+of the choice of mathematics crate ([`cgmath`], [`glam`], etc.).
 
 [space]: https://en.wikipedia.org/wiki/euclidean_space
 
 [`cgmath`]: https://crates.io/crates/cgmath
 [`decorum`]: https://crates.io/crates/decorum
+[`glam`]: https://crates.io/crates/glam
 [`nalgebra`]: https://crates.io/crates/nalgebra
 [`theon`]: https://crates.io/crates/theon
