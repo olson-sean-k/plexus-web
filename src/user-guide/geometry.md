@@ -1,7 +1,7 @@
-Plexus uses the [`theon`] crate to abstract [Euclidean spaces][space] and
-support various types in the Rust ecosystem. [`theon`] provides types and traits
-used to implement linear algebra and computational geometry without forcing
-dependent crates to use specific crates and types.
+Plexus uses the [`theon`][] crate to abstract [Euclidean spaces][space] and
+support various types in the Rust ecosystem. [`theon`][] provides types and
+traits used to implement linear algebra and computational geometry without
+forcing dependent crates to use specific crates and types.
 
 Mesh data structures like buffers and [graphs](../graphs) can contain arbitrary
 data, including non-geometric data and no data at all. Geometric traits are not
@@ -13,8 +13,8 @@ easily if these traits are implemented.
 !!! note
     Enabling [geometry Cargo features](../getting-started/#integrations)
     provides implementations of these traits for types from commonly used crates
-    like [`cgmath`] and [`nalgebra`]. It is highly recommended to enable these
-    features when using these crates.
+    like [`cgmath`][] and [`nalgebra`][]. It is highly recommended to enable
+    these features when using these crates.
 
 ## Conversions
 
@@ -26,14 +26,14 @@ that would violate coherence rules using `From` and `Into`.
 
 Conversions are optionally implemented via [geometry Cargo
 features](../getting-started/#integrations) and include support for implicit
-scalar conversions of types from the [`decorum`] crate.
+scalar conversions of types from the [`decorum`][] crate.
 
-The `AsPosition` trait is re-exported from [`theon`] in the `geometry` module
+The `AsPosition` trait is re-exported from [`theon`][] in the `geometry` module
 and allows types to expose positional data. When this positional data implements
 the appropriate traits, geometric APIs can be used. For example, this allows
 [graphs](../graphs) to support splitting edges at midpoints, extruding faces
 along translation vectors, and flattening faces into a best-fit plane regardless
-of the choice of mathematics crate ([`cgmath`], [`glam`], etc.).
+of the choice of mathematics crate ([`cgmath`][], [`glam`][], etc.).
 
 [space]: https://en.wikipedia.org/wiki/euclidean_space
 

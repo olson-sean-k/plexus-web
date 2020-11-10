@@ -145,10 +145,10 @@ let mut graph = MeshGraph::<Vertex>::new();
 ```
 
 !!! note
-    Most examples on this page use the `R64` type from the [`decorum`] crate and
-    the `Point2` and `Point3` types from the [`nalgebra`] crate for graph data.
-    When the `geometry-nalgebra` feature is enabled, these types implement
-    `GraphData`.
+    Most examples on this page use the `R64` type from the [`decorum`][] crate
+    and the `Point2` and `Point3` types from the [`nalgebra`][] crate for graph
+    data.  When the `geometry-nalgebra` feature is enabled, these types
+    implement `GraphData`.
 
 The associated types specified by a `GraphData` implementation determine the
 type exposed by the `get` and `get_mut` functions of [views](../graphs/#views).
@@ -653,8 +653,8 @@ where
 ```
 
 These traits avoid the need to specify very complex type bounds, but it is also
-possible to express type bounds directly using traits from the [`decorum`] and
-[`theon`] crates.
+possible to express type bounds directly using traits from the [`decorum`][] and
+[`theon`][] crates.
 
 The following example expresses type bounds for a function that computes the
 area of faces in two-dimensional graphs:

@@ -56,7 +56,7 @@ let (indices, vertices) = Cube::new()
 
 ## Integrations
 
-Plexus integrates with the [`theon`] crate to abstract Euclidean spaces and
+Plexus integrates with the [`theon`][] crate to abstract Euclidean spaces and
 provide geometric traits that support various mathematics crates in the Rust
 ecosystem. Any mathematics crate can be used and, if it is supported by Theon,
 Plexus provides geometric APIs.
@@ -64,13 +64,13 @@ Plexus provides geometric APIs.
 Geometric traits are optionally implemented for types in various crates by
 enabling [Cargo features][cargo-features].
 
-| Feature                | Default | Crate           | Support  |
-|------------------------|---------|-----------------|----------|
-| `geometry-cgmath`      | No      | [`cgmath`]      | Complete |
-| `geometry-glam`        | No      | [`glam`]        | Complete |
-| `geometry-mint`        | No      | [`mint`]        | Partial  |
-| `geometry-nalgebra`    | No      | [`nalgebra`]    | Complete |
-| `geometry-ultraviolet` | No      | [`ultraviolet`] | Partial  |
+| Feature                | Default | Crate             | Support  |
+|------------------------|---------|-------------------|----------|
+| `geometry-cgmath`      | No      | [`cgmath`][]      | Complete |
+| `geometry-glam`        | No      | [`glam`][]        | Complete |
+| `geometry-mint`        | No      | [`mint`][]        | Partial  |
+| `geometry-nalgebra`    | No      | [`nalgebra`][]    | Complete |
+| `geometry-ultraviolet` | No      | [`ultraviolet`][] | Partial  |
 
 If using one of these supported crates, it is highly recommended to enable the
 corresponding feature. To configure features, specify a dependency on Plexus in
@@ -89,7 +89,7 @@ features = [
 ]
 ```
 
-Plexus also integrates with the [`decorum`] crate for floating-point
+Plexus also integrates with the [`decorum`][] crate for floating-point
 representations that can be hashed for fast indexing. The `R64` type is a
 (totally ordered) real number with an `f64` representation that cannot be `NaN`
 nor infinity, for example. Geometric conversion traits are implemented for
