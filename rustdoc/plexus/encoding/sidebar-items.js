@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["ply","PLY encoding."]],"trait":[["FaceDecoder",""],["FromEncoding",""],["VertexDecoder",""]]});

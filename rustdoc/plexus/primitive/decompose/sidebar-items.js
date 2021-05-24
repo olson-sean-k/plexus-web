@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Decompose",""]],"trait":[["Edges",""],["IntoEdges",""],["IntoSubdivisions",""],["IntoTetrahedrons",""],["IntoTrigons",""],["IntoVertices",""],["Subdivide",""],["Tetrahedrons",""],["Triangulate",""],["Vertices",""]]});

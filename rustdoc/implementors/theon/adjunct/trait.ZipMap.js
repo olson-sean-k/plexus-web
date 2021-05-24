@@ -1,0 +1,4 @@
+(function() {var implementors = {};
+implementors["plexus"] = [{"text":"impl&lt;G, H, const N:&nbsp;<a class=\"primitive\" href=\"https://doc.rust-lang.org/nightly/std/primitive.usize.html\">usize</a>&gt; <a class=\"trait\" href=\"theon/adjunct/trait.ZipMap.html\" title=\"trait theon::adjunct::ZipMap\">ZipMap</a>&lt;H&gt; for <a class=\"struct\" href=\"plexus/primitive/struct.NGon.html\" title=\"struct plexus::primitive::NGon\">NGon</a>&lt;G, N&gt;","synthetic":false,"types":["plexus::primitive::NGon"]}];
+implementors["theon"] = [];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
