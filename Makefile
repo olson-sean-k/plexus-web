@@ -5,6 +5,8 @@ OUT:=./out
 LIB:=$(OUT)/lib
 SITE:=$(OUT)/site
 
+.PHONY: build clean publish upstream
+
 # TODO: It is not yet possible to use Cargo configuration to embed HTML headers
 #       in documentation. Use the absolute path to the headers included with
 #       Plexus to document all specified crates.
