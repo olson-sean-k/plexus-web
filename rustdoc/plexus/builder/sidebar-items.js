@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Buildable","Polygonal mesh data structure that can be built incrementally."],["FacetBuilder",""],["MeshBuilder","Incremental polygonal mesh builder."],["SurfaceBuilder",""]]});

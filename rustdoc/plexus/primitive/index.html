@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Primitive topological structures."><meta name="keywords" content="rust, rustlang, rust-lang, primitive"><title>plexus::primitive - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://plexus.rs/img/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });
+    });
+</script>
+
+</head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container"><img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container">
+                    <img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Module primitive</a></h2><div class="sidebar-elems"><section><div class="block"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div></section><div id="sidebar-vars" data-name="primitive" data-ty="mod" data-relpath="./"></div><script defer src="./sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../plexus/index.html">
+                        <img src="https://plexus.rs/img/plexus.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Module <a href="../index.html">plexus</a>::<wbr><a class="mod" href="#">primitive</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/plexus/primitive/mod.rs.html#1-1370">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Primitive topological structures.</p>
+<p>This module provides composable primitives that describe polygonal
+structures. This includes simple $n$-gons like triangles, polytope
+<a href="generate/index.html" title="generate">generators</a>, and iterator expressions that compose and
+decompose iterators of primitives.</p>
+<p>Types in this module generally describe <a href="https://en.wikipedia.org/wiki/cycle_graph">cycle graphs</a> and are
+not strictly geometric. For example, <a href="trait.Polygonal.html" title="Polygonal"><code>Polygonal</code></a> types may be
+geometrically degenerate (e.g., collinear, converged, etc.) or used to
+approximate polygons from $\Reals^2$ embedded into higher-dimensional
+spaces. These types are also used for indexing, in which case their
+representation and data are both entirely topological.</p>
+<p>Plexus uses the terms <em>trigon</em> and <em>tetragon</em> for its polygon types, which
+mean <em>triangle</em> and <em>quadrilateral</em>, respectively. This is done for
+consistency with higher arity polygon names (e.g., <em>decagon</em>). In some
+contexts, the term <em>triangle</em> is still used, such as in functions concerning
+<em>triangulation</em>.</p>
+<h2 id="representations"><a href="#representations">Representations</a></h2>
+<p>Plexus provides various topological types with different capabilities
+summarized below:</p>
+<div><table><thead><tr><th>Type</th><th>Morphism</th><th>Arity</th><th>Map</th><th>Zip</th><th>Tessellate</th></tr></thead><tbody>
+<tr><td><code>NGon</code></td><td>Monomorphic</td><td>$1,[3,32]$</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+<tr><td><code>BoundedPolygon</code></td><td>Polymorphic</td><td>$[3,4]$</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+<tr><td><code>UnboundedPolygon</code></td><td>Polymorphic</td><td>$[3,\infin)$</td><td>Yes</td><td>No</td><td>No</td></tr>
+</tbody></table>
+</div>
+<p><a href="struct.NGon.html"><code>NGon</code></a> is <a href="../trait.Monomorphic.html" title="Monomorphic">monomorphic</a> and supports the broadest set of
+traits and features. However, its <a href="../trait.StaticArity.html">type-level</a> arity is
+somewhat limited and its <a href="../trait.DynamicArity.html">value-level</a> arity is fixed. This
+means, for example, that it is not possible to have an iterator of <a href="struct.NGon.html"><code>NGon</code></a>s
+represent both trigons and tetragons, because these polygons must be
+distinct <a href="struct.NGon.html"><code>NGon</code></a> types.</p>
+<p>The polygon types <a href="enum.BoundedPolygon.html"><code>BoundedPolygon</code></a> and <a href="struct.UnboundedPolygon.html"><code>UnboundedPolygon</code></a> are
+polymorphic and therefore support variable <a href="../trait.DynamicArity.html">value-level</a>
+<a href="../trait.Arity.html">arity</a>. <a href="enum.BoundedPolygon.html"><code>BoundedPolygon</code></a> only expresses a limited set of
+polygons by enumerating <a href="struct.NGon.html"><code>NGon</code></a>s, but supports decomposition and other
+traits. <a href="struct.UnboundedPolygon.html"><code>UnboundedPolygon</code></a> is most flexible and can represent any
+arbitrary polygon, but does not support any tessellation features.</p>
+<p><a href="type.Edge.html" title="Edge"><code>Edge</code></a>s are always represented as <code>NGon&lt;_, 2&gt;</code>.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<p>Generating <a href="../buffer/index.html">raw buffers</a> with positional data of a <a href="cube/struct.Cube.html">cube</a>
+using an <a href="../index/trait.Indexer.html"><code>Indexer</code></a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">decorum::N64</span>;
+<span class="kw">use</span> <span class="ident">nalgebra::Point3</span>;
+<span class="kw">use</span> <span class="ident">plexus::index</span>::{<span class="ident">Flat3</span>, <span class="ident">HashIndexer</span>};
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::cube::Cube</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::generate::Position</span>;
+
+<span class="kw">let</span> (<span class="ident">indices</span>, <span class="ident">positions</span>) <span class="op">=</span> <span class="ident">Cube::new</span>()
+    .<span class="ident">polygons</span>::<span class="op">&lt;</span><span class="ident">Position</span><span class="op">&lt;</span><span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">N64</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>()
+    .<span class="ident">triangulate</span>()
+    .<span class="ident">index_vertices</span>::<span class="op">&lt;</span><span class="ident">Flat3</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">HashIndexer::default</span>());</code></pre></div>
+</div></details><h2 id="modules" class="small-section-header"><a href="#modules">Modules</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="mod" href="cube/index.html" title="plexus::primitive::cube mod">cube</a></div><div class="item-right docblock-short"><p>Cube primitives.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="decompose/index.html" title="plexus::primitive::decompose mod">decompose</a></div><div class="item-right docblock-short"><p>Decomposition and tessellation.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="generate/index.html" title="plexus::primitive::generate mod">generate</a></div><div class="item-right docblock-short"><p>Polytope generation.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="mod" href="sphere/index.html" title="plexus::primitive::sphere mod">sphere</a></div><div class="item-right docblock-short"><p>Sphere primitives.</p>
+</div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.InteriorMap.html" title="plexus::primitive::InteriorMap struct">InteriorMap</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.NGon.html" title="plexus::primitive::NGon struct">NGon</a></div><div class="item-right docblock-short"><p>Monomorphic $n$-gon.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.UnboundedPolygon.html" title="plexus::primitive::UnboundedPolygon struct">UnboundedPolygon</a></div><div class="item-right docblock-short"><p>Unbounded polymorphic $n$-gon.</p>
+</div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.BoundedPolygon.html" title="plexus::primitive::BoundedPolygon enum">BoundedPolygon</a></div><div class="item-right docblock-short"><p>Bounded polymorphic $n$-gon.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.EdgeEdge.html" title="plexus::primitive::EdgeEdge enum">EdgeEdge</a></div><div class="item-right docblock-short"><p>Intersection of edges.</p>
+</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.IntoIndexed.html" title="plexus::primitive::IntoIndexed trait">IntoIndexed</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.IntoPolygons.html" title="plexus::primitive::IntoPolygons trait">IntoPolygons</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.MapVertices.html" title="plexus::primitive::MapVertices trait">MapVertices</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Polygonal.html" title="plexus::primitive::Polygonal trait">Polygonal</a></div><div class="item-right docblock-short"><p>Polygonal structure.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Rotate.html" title="plexus::primitive::Rotate trait">Rotate</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Topological.html" title="plexus::primitive::Topological trait">Topological</a></div><div class="item-right docblock-short"><p>Topological structure.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Zip.html" title="plexus::primitive::Zip trait">Zip</a></div><div class="item-right docblock-short"></div></div></div><h2 id="functions" class="small-section-header"><a href="#functions">Functions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="fn" href="fn.zip_vertices.html" title="plexus::primitive::zip_vertices fn">zip_vertices</a></div><div class="item-right docblock-short"><p>Zips the vertices of <a href="trait.Topological.html"><code>Topological</code></a> types from multiple iterators into a
+single iterator.</p>
+</div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Edge.html" title="plexus::primitive::Edge type">Edge</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Tetragon.html" title="plexus::primitive::Tetragon type">Tetragon</a></div><div class="item-right docblock-short"><p>Quadrilateral.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Trigon.html" title="plexus::primitive::Trigon type">Trigon</a></div><div class="item-right docblock-short"><p>Triangle.</p>
+</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="plexus" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (546c826f0 2022-06-12)" ></div>
+</body></html>

@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["FloatHash","Hashing for primitive floating-point values."]]});

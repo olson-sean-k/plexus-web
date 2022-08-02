@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Incremental polygonal mesh construction."><meta name="keywords" content="rust, rustlang, rust-lang, builder"><title>plexus::builder - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://plexus.rs/img/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });
+    });
+</script>
+
+</head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container"><img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container">
+                    <img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Module builder</a></h2><div class="sidebar-elems"><section><div class="block"><ul><li><a href="#traits">Traits</a></li></ul></div></section><div id="sidebar-vars" data-name="builder" data-ty="mod" data-relpath="./"></div><script defer src="./sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../plexus/index.html">
+                        <img src="https://plexus.rs/img/plexus.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Module <a href="../index.html">plexus</a>::<wbr><a class="mod" href="#">builder</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/plexus/builder.rs.html#1-214">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Incremental polygonal mesh construction.</p>
+<p>This module provides traits for incrementally constructing mesh data
+structures. This API allows for meshes to be constructed in a way that is
+agnostic to the specific data structure used to represent the mesh.</p>
+<p><a href="trait.Buildable.html"><code>Buildable</code></a> is the primary trait of this API. It is implemented by mesh
+data structures and exposes various associated types for their associated
+data.  <a href="trait.Buildable.html"><code>Buildable</code></a> exposes a builder type via its
+<a href="trait.Buildable.html#tymethod.builder"><code>builder</code></a> function. This builder type in turn
+provides additional builders that can be used to construct a mesh from
+<em>surfaces</em> and <em>facets</em>.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<p>A function that generates a triangle from point geometry using builders:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">nalgebra::Point2</span>;
+<span class="kw">use</span> <span class="ident">plexus::buffer::MeshBuffer3</span>;
+<span class="kw">use</span> <span class="ident">plexus::builder::Buildable</span>;
+<span class="kw">use</span> <span class="ident">plexus::geometry::FromGeometry</span>;
+<span class="kw">use</span> <span class="ident">plexus::graph::MeshGraph</span>;
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+
+<span class="kw">type</span> <span class="ident">E2</span> <span class="op">=</span> <span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>;
+
+<span class="kw">fn</span> <span class="ident">trigon</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">points</span>: [<span class="ident">T</span>; <span class="number">3</span>]) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">B::Error</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">B</span>: <span class="ident">Buildable</span>,
+    <span class="ident">B::Vertex</span>: <span class="ident">FromGeometry</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+{
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">builder</span> <span class="op">=</span> <span class="ident">B::builder</span>();
+    <span class="ident">builder</span>.<span class="ident">surface_with</span>(<span class="op">|</span><span class="ident">builder</span><span class="op">|</span> {
+        <span class="kw">let</span> [<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>] <span class="op">=</span> <span class="ident">points</span>;
+        <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">insert_vertex</span>(<span class="ident">a</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">insert_vertex</span>(<span class="ident">b</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">builder</span>.<span class="ident">insert_vertex</span>(<span class="ident">c</span>)<span class="question-mark">?</span>;
+        <span class="ident">builder</span>.<span class="ident">facets_with</span>(<span class="op">|</span><span class="ident">builder</span><span class="op">|</span> <span class="ident">builder</span>.<span class="ident">insert_facet</span>(<span class="kw-2">&amp;</span>[<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">c</span>], <span class="ident">B::Facet::default</span>()))
+    })<span class="question-mark">?</span>;
+    <span class="ident">builder</span>.<span class="ident">build</span>()
+}
+
+<span class="comment">// `MeshBuffer` and `MeshGraph` implement the `Buildable` trait.</span>
+<span class="kw">let</span> <span class="ident">graph</span>: <span class="ident">MeshGraph</span><span class="op">&lt;</span><span class="ident">E2</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">trigon</span>([(<span class="number">0.0</span>, <span class="number">0.0</span>), (<span class="number">0.0</span>, <span class="number">1.0</span>), (<span class="number">1.0</span>, <span class="number">1.0</span>)]).<span class="ident">unwrap</span>();
+<span class="kw">let</span> <span class="ident">buffer</span>: <span class="ident">MeshBuffer3</span><span class="op">&lt;</span><span class="ident">usize</span>, <span class="ident">E2</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">trigon</span>([(<span class="number">0.0</span>, <span class="number">0.0</span>), (<span class="number">0.0</span>, <span class="number">1.0</span>), (<span class="number">1.0</span>, <span class="number">1.0</span>)]).<span class="ident">unwrap</span>();</code></pre></div>
+</div></details><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Buildable.html" title="plexus::builder::Buildable trait">Buildable</a></div><div class="item-right docblock-short"><p>Polygonal mesh data structure that can be built incrementally.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.FacetBuilder.html" title="plexus::builder::FacetBuilder trait">FacetBuilder</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.MeshBuilder.html" title="plexus::builder::MeshBuilder trait">MeshBuilder</a></div><div class="item-right docblock-short"><p>Incremental polygonal mesh builder.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.SurfaceBuilder.html" title="plexus::builder::SurfaceBuilder trait">SurfaceBuilder</a></div><div class="item-right docblock-short"></div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="plexus" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (546c826f0 2022-06-12)" ></div>
+</body></html>

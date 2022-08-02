@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Half-edge graph representation of polygonal meshes."><meta name="keywords" content="rust, rustlang, rust-lang, graph"><title>plexus::graph - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://plexus.rs/img/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });
+    });
+</script>
+
+</head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container"><img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container">
+                    <img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Module graph</a></h2><div class="sidebar-elems"><section><div class="block"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div></section><div id="sidebar-vars" data-name="graph" data-ty="mod" data-relpath="./"></div><script defer src="./sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../plexus/index.html">
+                        <img src="https://plexus.rs/img/plexus.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Module <a href="../index.html">plexus</a>::<wbr><a class="mod" href="#">graph</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/plexus/graph/mod.rs.html#1-1758">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Half-edge graph representation of polygonal meshes.</p>
+<p>This module provides a flexible representation of polygonal meshes as a
+<a href="https://en.wikipedia.org/wiki/doubly_connected_edge_list">half-edge graph</a>. Plexus refers to <em>Half-edges</em> and <em>edges</em> as <em>arcs</em>
+and <em>edges</em>, respectively. Graphs can store arbitrary data associated with
+any topological entity (vertices, arcs, edges, and faces).</p>
+<p>Graph APIs support geometric operations if vertex data implements the
+<a href="../geometry/trait.AsPosition.html"><code>AsPosition</code></a> trait.</p>
+<p>See the <a href="https://plexus.rs/user-guide/graphs">user guide</a> for more details and examples.</p>
+<h2 id="representation"><a href="#representation">Representation</a></h2>
+<p>A <a href="struct.MeshGraph.html"><code>MeshGraph</code></a> is fundamentally composed of four entities: <em>vertices</em>,
+<em>arcs</em>, <em>edges</em>, and <em>faces</em>. The figure below summarizes the connectivity
+of these entities.</p>
+<p><img src="https://plexus.rs/img/heg.svg" alt="Half-Edge Graph Figure" /></p>
+<p>Arcs are directed and connect vertices. An arc that is directed toward a
+vertex $A$ is an <em>incoming arc</em> with respect to $A$. Similarly, an arc
+directed away from such a vertex is an <em>outgoing arc</em>. Every vertex is
+associated with exactly one <em>leading arc</em>, which is always an outgoing arc.
+The vertex toward which an arc is directed is the arc’s <em>destination vertex</em>
+and the other is its <em>source vertex</em>.</p>
+<p>Every arc is paired with an <em>opposite arc</em> with an opposing direction.
+Given an arc from a vertex $A$ to a vertex $B$, that arc will have an
+opposite arc from $B$ to $A$. Such arcs are notated $\overrightarrow{AB}$
+and $\overrightarrow{BA}$. Together, these arcs form an <em>edge</em>, which is not
+directed. An edge and its two arcs are together called a <em>composite edge</em>.</p>
+<p>Arcs are connected to their adjacent arcs, known as <em>next</em> and <em>previous
+arcs</em>. A traversal along a series of arcs is a <em>path</em>. The path formed by
+traversing from an arc to its next arc and so on is a <em>ring</em>. When a face is
+present within an ring, the arcs will refer to that face and the face will
+refer to exactly one of the arcs in the ring (this is the leading arc of the
+face). An arc with no associated face is known as a <em>boundary arc</em>.  If
+either of an edge’s arcs is a boundary arc, then that edge is a <em>boundary
+edge</em>.</p>
+<p>A path that terminates is <em>open</em> and a path that forms a loop is <em>closed</em>.
+Rings are always closed. Paths may be notated using <em>sequence</em> or <em>set
+notation</em> and both forms are used to describe rings and faces.</p>
+<p>Sequence notation is formed from the ordered sequence of vertices that a
+path traverses, including the source vertex of the first arc and the
+destination vertex of the last arc. Set notation is similar, but is
+implicitly closed and only includes the ordered and unique set of vertices
+traversed by the path. An open path over vertices $A$, $B$, and $C$ is
+notated as a sequence $\overrightarrow{(A,B,C)}$. A closed path over
+vertices $A$, $B$, and $C$ includes the arc $\overrightarrow{CA}$ and is
+notated as a sequence $\overrightarrow{(A,B,C,A)}$ or a set
+$\overrightarrow{\{A,B,C\}}$.</p>
+<p>Together with vertices and faces, the connectivity of arcs allows for
+effecient traversals. For example, it becomes trivial to find adjacent
+entities, such as the faces that share a given vertex or the adjacent faces
+of a given face.</p>
+<p><a href="struct.MeshGraph.html"><code>MeshGraph</code></a>s store entities using associative data structures with
+strongly typed and opaque keys. These keys are used to refer entities in a
+graph. Note that paths and rings are <strong>not</strong> entities and are not explicitly
+stored in graphs.</p>
+<h2 id="views"><a href="#views">Views</a></h2>
+<p><a href="struct.MeshGraph.html"><code>MeshGraph</code></a>s expose <em>views</em> over their entities (vertices, arcs, edges,
+and faces). Views are a type of <em>smart pointer</em> and bind entity storage with
+a key for a specific entity. They extend entities with rich behaviors and
+expose their associated data via <code>get</code> and <code>get_mut</code> functions.</p>
+<p>Views provide the primary API for interacting with a <a href="struct.MeshGraph.html"><code>MeshGraph</code></a>’s
+topology and data. There are three types of views summarized below:</p>
+<div><table><thead><tr><th>Type</th><th>Traversal</th><th>Exclusive</th><th>Data</th><th>Topology</th></tr></thead><tbody>
+<tr><td>Immutable</td><td>Yes</td><td>No</td><td>Immutable</td><td>Immutable</td></tr>
+<tr><td>Mutable</td><td>Yes</td><td>Yes</td><td>Mutable</td><td>Mutable</td></tr>
+<tr><td>Orphan</td><td>No</td><td>No</td><td>Mutable</td><td>N/A</td></tr>
+</tbody></table>
+</div>
+<p><em>Immutable</em> and <em>mutable views</em> behave similarly to Rust’s <code>&amp;</code> and <code>&amp;mut</code>
+references: immutable views cannot mutate a graph and are not exclusive
+while mutable views may mutate both the data and topology of a graph but are
+exclusive.</p>
+<p><em>Orphan views</em> (simply referred to as <em>orphans</em> in APIs) may mutate the data
+of a graph, but they cannot access the topology of a graph and cannot
+traverse a graph in any way. This is only useful for modifying the data in a
+graph, but unlike mutable views, orphan views are not exclusive.</p>
+<p>Views perform <em>interior reborrows</em>, which reborrow the reference to storage
+to construct other views. Immutable reborrows can be performed explicitly
+using the conversions described below:</p>
+<div><table><thead><tr><th>Function</th><th>Receiver</th><th>Borrow</th><th>Output</th></tr></thead><tbody>
+<tr><td><code>to_ref</code></td><td><code>&amp;self</code></td><td><code>&amp;_</code></td><td>Immutable</td></tr>
+<tr><td><code>into_ref</code></td><td><code>self</code></td><td><code>&amp;*_</code></td><td>Immutable</td></tr>
+</tbody></table>
+</div>
+<p>It is not possible to explicitly perform a mutable interior reborrow. Such a
+reborrow could invalidate the source view by performing a topological
+mutation. Mutable reborrows are performed beneath safe APIs, such as those
+exposing iterators over orphan views.</p>
+<h2 id="geometric-traits"><a href="#geometric-traits">Geometric Traits</a></h2>
+<p>The <a href="trait.GraphData.html"><code>GraphData</code></a> trait is used to specify the types of data stored in
+entities in a <a href="struct.MeshGraph.html"><code>MeshGraph</code></a>. If the <code>Vertex</code> data implements the
+<a href="../geometry/trait.AsPosition.html"><code>AsPosition</code></a> trait and the positional data implements the appropriate
+geometric traits, then geometric APIs like
+<a href="struct.ArcView.html#method.split_at_midpoint"><code>split_at_midpoint</code></a> and
+<a href="struct.FaceView.html#method.poke_with_offset"><code>poke_with_offset</code></a> can be used. Abstracting
+this in generic code involves various traits from <a href="https://crates.io/crates/theon"><code>theon</code></a>.</p>
+<p>This module provides geometric traits that describe supported geometric
+operations without the need to express complicated relationships between
+types representing a <a href="../../theon/space/trait.EuclideanSpace.html">Euclidean space</a>. These traits
+express the geometric capabilites of <a href="trait.GraphData.html"><code>GraphData</code></a>. For example, the
+following generic function requires <a href="trait.EdgeMidpoint.html"><code>EdgeMidpoint</code></a> and subdivides faces in
+a graph by splitting edges at their midpoints:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">plexus::geometry::AsPositionMut</span>;
+<span class="kw">use</span> <span class="ident">plexus::graph</span>::{<span class="ident">EdgeMidpoint</span>, <span class="ident">FaceView</span>, <span class="ident">GraphData</span>, <span class="ident">MeshGraph</span>};
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">smallvec::SmallVec</span>;
+
+<span class="comment">// Requires `EdgeMidpoint` for `split_at_midpoint`.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ambo</span><span class="op">&lt;</span><span class="ident">G</span><span class="op">&gt;</span>(<span class="ident">face</span>: <span class="ident">FaceView</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">MeshGraph</span><span class="op">&lt;</span><span class="ident">G</span><span class="op">&gt;</span><span class="op">&gt;</span>) -&gt; <span class="ident">FaceView</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">MeshGraph</span><span class="op">&lt;</span><span class="ident">G</span><span class="op">&gt;</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">G</span>: <span class="ident">EdgeMidpoint</span> <span class="op">+</span> <span class="ident">GraphData</span>,
+    <span class="ident">G::Vertex</span>: <span class="ident">AsPositionMut</span>,
+{
+    <span class="kw">let</span> <span class="ident">arity</span> <span class="op">=</span> <span class="ident">face</span>.<span class="ident">arity</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">arc</span> <span class="op">=</span> <span class="ident">face</span>.<span class="ident">into_arc</span>();
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">splits</span> <span class="op">=</span> <span class="ident">SmallVec</span>::<span class="op">&lt;</span>[<span class="kw">_</span>; <span class="number">4</span>]<span class="op">&gt;</span><span class="ident">::with_capacity</span>(<span class="ident">arity</span>);
+    <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">arity</span> {
+        <span class="kw">let</span> <span class="ident">vertex</span> <span class="op">=</span> <span class="ident">arc</span>.<span class="ident">split_at_midpoint</span>();
+        <span class="ident">splits</span>.<span class="ident">push</span>(<span class="ident">vertex</span>.<span class="ident">key</span>());
+        <span class="ident">arc</span> <span class="op">=</span> <span class="ident">vertex</span>.<span class="ident">into_outgoing_arc</span>().<span class="ident">into_next_arc</span>();
+    }
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">face</span> <span class="op">=</span> <span class="ident">arc</span>.<span class="ident">into_face</span>().<span class="ident">unwrap</span>();
+    <span class="kw">for</span> (<span class="ident">a</span>, <span class="ident">b</span>) <span class="kw">in</span> <span class="ident">splits</span>.<span class="ident">into_iter</span>().<span class="ident">perimeter</span>() {
+        <span class="ident">face</span> <span class="op">=</span> <span class="ident">face</span>.<span class="ident">split</span>(<span class="ident">a</span>, <span class="ident">b</span>).<span class="ident">unwrap</span>().<span class="ident">into_face</span>().<span class="ident">unwrap</span>();
+    }
+    <span class="ident">face</span>
+}</code></pre></div>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<p>Generating a <a href="struct.MeshGraph.html"><code>MeshGraph</code></a> from a <a href="../primitive/sphere/struct.UvSphere.html">$uv$-sphere</a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">decorum::R64</span>;
+<span class="kw">use</span> <span class="ident">nalgebra::Point3</span>;
+<span class="kw">use</span> <span class="ident">plexus::graph::MeshGraph</span>;
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::generate::Position</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::sphere::UvSphere</span>;
+
+<span class="kw">type</span> <span class="ident">E3</span> <span class="op">=</span> <span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">R64</span><span class="op">&gt;</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">graph</span>: <span class="ident">MeshGraph</span><span class="op">&lt;</span><span class="ident">E3</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">UvSphere::default</span>().<span class="ident">polygons</span>::<span class="op">&lt;</span><span class="ident">Position</span><span class="op">&lt;</span><span class="ident">E3</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">collect</span>();</code></pre></div>
+<p>Extruding a face in a <a href="struct.MeshGraph.html"><code>MeshGraph</code></a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">decorum::R64</span>;
+<span class="kw">use</span> <span class="ident">nalgebra::Point3</span>;
+<span class="kw">use</span> <span class="ident">plexus::graph::MeshGraph</span>;
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::generate::Position</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::sphere::UvSphere</span>;
+
+<span class="kw">type</span> <span class="ident">E3</span> <span class="op">=</span> <span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">R64</span><span class="op">&gt;</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">graph</span>: <span class="ident">MeshGraph</span><span class="op">&lt;</span><span class="ident">E3</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">UvSphere::new</span>(<span class="number">8</span>, <span class="number">8</span>).<span class="ident">polygons</span>::<span class="op">&lt;</span><span class="ident">Position</span><span class="op">&lt;</span><span class="ident">E3</span><span class="op">&gt;</span><span class="op">&gt;</span>().<span class="ident">collect</span>();
+<span class="comment">// Get the key of the first face and then extrude it.</span>
+<span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">graph</span>.<span class="ident">faces</span>().<span class="ident">nth</span>(<span class="number">0</span>).<span class="ident">unwrap</span>().<span class="ident">key</span>();
+<span class="kw">let</span> <span class="ident">face</span> <span class="op">=</span> <span class="ident">graph</span>
+    .<span class="ident">face_mut</span>(<span class="ident">key</span>)
+    .<span class="ident">unwrap</span>()
+    .<span class="ident">extrude_with_offset</span>(<span class="number">1.0</span>)
+    .<span class="ident">unwrap</span>();</code></pre></div>
+<p>Traversing and circulating over a <a href="struct.MeshGraph.html"><code>MeshGraph</code></a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">nalgebra::Point2</span>;
+<span class="kw">use</span> <span class="ident">plexus::graph::MeshGraph</span>;
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::Tetragon</span>;
+
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">graph</span> <span class="op">=</span> <span class="ident">MeshGraph</span>::<span class="op">&lt;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::from_raw_buffers</span>(
+    <span class="macro">vec!</span>[<span class="ident">Tetragon::new</span>(<span class="number">0u32</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)],
+    <span class="macro">vec!</span>[(<span class="number">0.0</span>, <span class="number">0.0</span>), (<span class="number">1.0</span>, <span class="number">0.0</span>), (<span class="number">1.0</span>, <span class="number">1.0</span>), (<span class="number">0.0</span>, <span class="number">1.0</span>)],
+)
+.<span class="ident">unwrap</span>();
+<span class="ident">graph</span>.<span class="ident">triangulate</span>();
+
+<span class="comment">// Traverse an arc and use a circulator to get the faces of a nearby vertex.</span>
+<span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">graph</span>.<span class="ident">arcs</span>().<span class="ident">nth</span>(<span class="number">0</span>).<span class="ident">unwrap</span>().<span class="ident">key</span>();
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">vertex</span> <span class="op">=</span> <span class="ident">graph</span>
+    .<span class="ident">arc_mut</span>(<span class="ident">key</span>)
+    .<span class="ident">unwrap</span>()
+    .<span class="ident">into_opposite_arc</span>()
+    .<span class="ident">into_next_arc</span>()
+    .<span class="ident">into_destination_vertex</span>();
+<span class="kw">for</span> <span class="kw-2">mut</span> <span class="ident">face</span> <span class="kw">in</span> <span class="ident">vertex</span>.<span class="ident">adjacent_face_orphans</span>() {
+    <span class="comment">// `face.get_mut()` provides a mutable reference to face data.</span>
+}</code></pre></div>
+</div></details><h2 id="reexports" class="small-section-header"><a href="#reexports">Re-exports</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left import-item" id="reexport.ByIndex"><code>pub use Selector::<a class="enum" href="enum.Selector.html" title="enum plexus::graph::Selector">ByIndex</a>;</code></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left import-item" id="reexport.ByKey"><code>pub use Selector::<a class="enum" href="enum.Selector.html" title="enum plexus::graph::Selector">ByKey</a>;</code></div><div class="item-right docblock-short"></div></div></div><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ArcKey.html" title="plexus::graph::ArcKey struct">ArcKey</a></div><div class="item-right docblock-short"><p>Arc key.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ArcOrphan.html" title="plexus::graph::ArcOrphan struct">ArcOrphan</a></div><div class="item-right docblock-short"><p>Orphan view of an arc entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.ArcView.html" title="plexus::graph::ArcView struct">ArcView</a></div><div class="item-right docblock-short"><p>View of an arc entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.EdgeKey.html" title="plexus::graph::EdgeKey struct">EdgeKey</a></div><div class="item-right docblock-short"><p>Edge key.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.EdgeOrphan.html" title="plexus::graph::EdgeOrphan struct">EdgeOrphan</a></div><div class="item-right docblock-short"><p>Orphan view of an edge entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.EdgeView.html" title="plexus::graph::EdgeView struct">EdgeView</a></div><div class="item-right docblock-short"><p>View of an edge entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.FaceKey.html" title="plexus::graph::FaceKey struct">FaceKey</a></div><div class="item-right docblock-short"><p>Face key.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.FaceOrphan.html" title="plexus::graph::FaceOrphan struct">FaceOrphan</a></div><div class="item-right docblock-short"><p>Orphan view of a face entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.FaceView.html" title="plexus::graph::FaceView struct">FaceView</a></div><div class="item-right docblock-short"><p>View of a face entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.MeshGraph.html" title="plexus::graph::MeshGraph struct">MeshGraph</a></div><div class="item-right docblock-short"><p><a href="https://en.wikipedia.org/wiki/doubly_connected_edge_list">Half-edge graph</a> representation of a polygonal mesh.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Path.html" title="plexus::graph::Path struct">Path</a></div><div class="item-right docblock-short"><p>Non-intersecting path.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Ring.html" title="plexus::graph::Ring struct">Ring</a></div><div class="item-right docblock-short"><p>Closed path formed by adjacent arcs.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.VertexKey.html" title="plexus::graph::VertexKey struct">VertexKey</a></div><div class="item-right docblock-short"><p>Vertex key.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.VertexOrphan.html" title="plexus::graph::VertexOrphan struct">VertexOrphan</a></div><div class="item-right docblock-short"><p>Orphan view of a vertex entity.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.VertexView.html" title="plexus::graph::VertexView struct">VertexView</a></div><div class="item-right docblock-short"><p>View of a vertex entity.</p>
+</div></div></div><h2 id="enums" class="small-section-header"><a href="#enums">Enums</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.GraphError.html" title="plexus::graph::GraphError enum">GraphError</a></div><div class="item-right docblock-short"><p>Errors concerning <a href="struct.MeshGraph.html"><code>MeshGraph</code></a>s.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.GraphKey.html" title="plexus::graph::GraphKey enum">GraphKey</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="enum" href="enum.Selector.html" title="plexus::graph::Selector enum">Selector</a></div><div class="item-right docblock-short"><p>Entity selector.</p>
+</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ArcNormal.html" title="plexus::graph::ArcNormal trait">ArcNormal</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ClosedView.html" title="plexus::graph::ClosedView trait">ClosedView</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.EdgeMidpoint.html" title="plexus::graph::EdgeMidpoint trait">EdgeMidpoint</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.FaceCentroid.html" title="plexus::graph::FaceCentroid trait">FaceCentroid</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.FaceNormal.html" title="plexus::graph::FaceNormal trait">FaceNormal</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.FacePlane.html" title="plexus::graph::FacePlane trait">FacePlane</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.GraphData.html" title="plexus::graph::GraphData trait">GraphData</a></div><div class="item-right docblock-short"><p>Graph data.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Rebind.html" title="plexus::graph::Rebind trait">Rebind</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ToArc.html" title="plexus::graph::ToArc trait">ToArc</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ToRing.html" title="plexus::graph::ToRing trait">ToRing</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.VertexCentroid.html" title="plexus::graph::VertexCentroid trait">VertexCentroid</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.VertexNormal.html" title="plexus::graph::VertexNormal trait">VertexNormal</a></div><div class="item-right docblock-short"></div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.VertexPosition.html" title="plexus::graph::VertexPosition type">VertexPosition</a></div><div class="item-right docblock-short"></div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="plexus" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (546c826f0 2022-06-12)" ></div>
+</body></html>

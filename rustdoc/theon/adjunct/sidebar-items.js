@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["Adjunct",""],["Converged",""],["Extend",""],["Fold",""],["FromItems",""],["IntoItems",""],["Map",""],["Truncate",""],["ZipMap",""]]});

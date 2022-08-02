@@ -1,0 +1,90 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Indexing and aggregation."><meta name="keywords" content="rust, rustlang, rust-lang, index"><title>plexus::index - Rust</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" href="https://plexus.rs/img/favicon.ico"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "$", right: "$", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });
+    });
+</script>
+
+</head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container"><img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../plexus/index.html"><div class="logo-container">
+                    <img src="https://plexus.rs/img/plexus.svg" alt="logo"></div>
+        </a><h2 class="location"><a href="#">Module index</a></h2><div class="sidebar-elems"><section><div class="block"><ul><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div></section><div id="sidebar-vars" data-name="index" data-ty="mod" data-relpath="./"></div><script defer src="./sidebar-items.js"></script></div></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../plexus/index.html">
+                        <img src="https://plexus.rs/img/plexus.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="main-heading">
+    <h1 class="fqn"><span class="in-band">Module <a href="../index.html">plexus</a>::<wbr><a class="mod" href="#">index</a><button id="copy-path" onclick="copy_path(this)" title="Copy item path to clipboard"><img src="../../clipboard.svg" width="19" height="18" alt="Copy item path"></button></span></h1><span class="out-of-band"><a class="srclink" href="../../src/plexus/index.rs.html#1-737">source</a> · <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class="inner">&#x2212;</span>]</a></span></div><details class="rustdoc-toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>Indexing and aggregation.</p>
+<p>This module provides types and traits that describe <em>index buffers</em> and
+<em>indexers</em> that disambiguate vertex data to construct minimal <em>index</em> and
+<em>vertex buffers</em>. Plexus refers to independent vertex and index buffers as
+<em>raw buffers</em>. See the <a href="../buffer/index.html"><code>buffer</code></a> module and <a href="../buffer/struct.MeshBuffer.html"><code>MeshBuffer</code></a> type for tools
+for working with these buffers.</p>
+<h2 id="index-buffers"><a href="#index-buffers">Index Buffers</a></h2>
+<p>Index buffers describe the topology of a polygonal mesh as ordered groups of
+indices into a vertex buffer. Each group of indices represents a polygon.
+The vertex buffer contains data that describes each vertex, such as
+positions or surface normals. Plexus supports <em>structured</em> and <em>flat</em> index
+buffers via the <a href="trait.Grouping.html" title="Grouping"><code>Grouping</code></a> and <a href="trait.IndexBuffer.html" title="IndexBuffer"><code>IndexBuffer</code></a> traits. These traits are
+implemented for <a href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html"><code>Vec</code></a>.</p>
+<p>Flat index buffers contain unstructured indices with an implicit grouping,
+such as <code>Vec&lt;usize&gt;</code>. Arity of these buffers is constant and is described by
+the <a href="struct.Flat.html"><code>Flat</code></a> meta-grouping. Rendering pipelines typically expect this
+format.</p>
+<p>Structured index buffers contain elements that explicitly group indices,
+such as <code>Vec&lt;Trigon&lt;usize&gt;&gt;</code>. These buffers can be formed from polygonal
+types in the <a href="../primitive/index.html"><code>primitive</code></a> module.</p>
+<h2 id="indexers"><a href="#indexers">Indexers</a></h2>
+<p><a href="trait.Indexer.html"><code>Indexer</code></a>s construct index and vertex buffers from iterators of polygonal
+types in the <a href="../primitive/index.html"><code>primitive</code></a> module, such as <a href="../primitive/struct.NGon.html"><code>NGon</code></a> and
+<a href="../primitive/struct.UnboundedPolygon.html"><code>UnboundedPolygon</code></a>. The <a href="trait.IndexVertices.html"><code>IndexVertices</code></a> trait provides functions for
+collecting an iterator of $n$-gons into these buffers.</p>
+<p>Mesh data structures also implement the <a href="trait.FromIndexer.html"><code>FromIndexer</code></a> and <a href="https://doc.rust-lang.org/nightly/core/iter/traits/collect/trait.FromIterator.html"><code>FromIterator</code></a>
+traits so that iterators of $n$-gons can be collected into these types
+(using a <a href="struct.HashIndexer.html"><code>HashIndexer</code></a> by default). A specific <a href="trait.Indexer.html"><code>Indexer</code></a> can be
+configured using the <a href="trait.CollectWithIndexer.html"><code>CollectWithIndexer</code></a> trait.</p>
+<h2 id="examples"><a href="#examples">Examples</a></h2>
+<p>Indexing data for a cube to create raw buffers and a <a href="../buffer/struct.MeshBuffer.html"><code>MeshBuffer</code></a>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use</span> <span class="ident">decorum::R64</span>;
+<span class="kw">use</span> <span class="ident">nalgebra::Point3</span>;
+<span class="kw">use</span> <span class="ident">plexus::buffer::MeshBuffer</span>;
+<span class="kw">use</span> <span class="ident">plexus::index</span>::{<span class="ident">Flat3</span>, <span class="ident">HashIndexer</span>};
+<span class="kw">use</span> <span class="ident">plexus::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::cube::Cube</span>;
+<span class="kw">use</span> <span class="ident">plexus::primitive::generate::Position</span>;
+
+<span class="kw">type</span> <span class="ident">E3</span> <span class="op">=</span> <span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">R64</span><span class="op">&gt;</span>;
+
+<span class="kw">let</span> (<span class="ident">indices</span>, <span class="ident">positions</span>) <span class="op">=</span> <span class="ident">Cube::new</span>()
+    .<span class="ident">polygons</span>::<span class="op">&lt;</span><span class="ident">Position</span><span class="op">&lt;</span><span class="ident">E3</span><span class="op">&gt;</span><span class="op">&gt;</span>()
+    .<span class="ident">triangulate</span>()
+    .<span class="ident">index_vertices</span>::<span class="op">&lt;</span><span class="ident">Flat3</span>, <span class="kw">_</span><span class="op">&gt;</span>(<span class="ident">HashIndexer::default</span>());
+<span class="kw">let</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="ident">MeshBuffer</span>::<span class="op">&lt;</span><span class="ident">Flat3</span>, <span class="ident">E3</span><span class="op">&gt;</span><span class="ident">::from_raw_buffers</span>(<span class="ident">indices</span>, <span class="ident">positions</span>).<span class="ident">unwrap</span>();</code></pre></div>
+</div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Flat.html" title="plexus::index::Flat struct">Flat</a></div><div class="item-right docblock-short"><p>Flat index buffer meta-grouping.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.HashIndexer.html" title="plexus::index::HashIndexer struct">HashIndexer</a></div><div class="item-right docblock-short"><p>Hashing vertex indexer.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.LruIndexer.html" title="plexus::index::LruIndexer struct">LruIndexer</a></div><div class="item-right docblock-short"><p>LRU caching vertex indexer.</p>
+</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.CollectWithIndexer.html" title="plexus::index::CollectWithIndexer trait">CollectWithIndexer</a></div><div class="item-right docblock-short"><p>Functions for collecting an iterator of $n$-gons into a mesh data structure.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.FromIndexer.html" title="plexus::index::FromIndexer trait">FromIndexer</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.GroupedIndexVertices.html" title="plexus::index::GroupedIndexVertices trait">GroupedIndexVertices</a></div><div class="item-right docblock-short"><p>Functions for collecting an iterator of $n$-gons into raw index and vertex
+buffers.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Grouping.html" title="plexus::index::Grouping trait">Grouping</a></div><div class="item-right docblock-short"></div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.IndexBuffer.html" title="plexus::index::IndexBuffer trait">IndexBuffer</a></div><div class="item-right docblock-short"><p>Index buffer.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.IndexVertices.html" title="plexus::index::IndexVertices trait">IndexVertices</a></div><div class="item-right docblock-short"><p>Functions for collecting an iterator of $n$-gons into raw index and vertex
+buffers.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Indexer.html" title="plexus::index::Indexer trait">Indexer</a></div><div class="item-right docblock-short"><p>Vertex indexer.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Push.html" title="plexus::index::Push trait">Push</a></div><div class="item-right docblock-short"></div></div></div><h2 id="types" class="small-section-header"><a href="#types">Type Definitions</a></h2>
+<div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Flat3.html" title="plexus::index::Flat3 type">Flat3</a></div><div class="item-right docblock-short"><p>Alias for a flat and triangular index buffer.</p>
+</div></div><div class="item-row"><div class="item-left module-item"><a class="type" href="type.Flat4.html" title="plexus::index::Flat4 type">Flat4</a></div><div class="item-right docblock-short"><p>Alias for a flat and quadrilateral index buffer.</p>
+</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="plexus" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0-nightly (546c826f0 2022-06-12)" ></div>
+</body></html>

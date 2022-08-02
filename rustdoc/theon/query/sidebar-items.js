@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["LineLine","Intersection of lines."],["LinePlane","Intersection of a line and a plane."],["PlaneRay","Intersection of a plane and a ray."]],"struct":[["Aabb","Axis-aligned bounding box."],["Line","Line."],["Plane",""],["Ray","Ray or half-line."],["Unit","Unit vector."]],"trait":[["Intersection","Intersection of geometric objects."]]});
