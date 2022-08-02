@@ -50,7 +50,8 @@ markdown_extensions:
       linenums: true
   - pymdownx.inlinehilite
   - pymdownx.superfences
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true
 
